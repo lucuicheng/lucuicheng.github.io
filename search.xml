@@ -6,6 +6,64 @@
     <content><![CDATA[]]></content>
   </entry>
   <entry>
+    <title>linux常用命令</title>
+    <url>/2020/03/23/LinuxCmd/</url>
+    <content><![CDATA[<h3 id="查看使用容量"><a href="#查看使用容量" class="headerlink" title="查看使用容量"></a>查看使用容量</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">查看当前目录总共占的容量。而不单独列出各子项占用的容量 </span></span><br><span class="line">du -sh </span><br><span class="line"><span class="meta">#</span><span class="bash">查看当前目录下一级子文件和子目录占用的磁盘容量</span></span><br><span class="line">du -lh --max-depth=1</span><br><span class="line"><span class="meta">#</span><span class="bash">统计当前文件夹(目录)大小，并按文件大小排序</span></span><br><span class="line">du -sh * | sort -nr </span><br><span class="line"><span class="meta">#</span><span class="bash">查看指定文件大小</span></span><br><span class="line">du -sk filename</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">find -maxdepth 1 -name "sellerbar-web-root-*.tar.gz" | xargs -i tar zxvf &#123;&#125;*</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">**/sellerbar-web-root-*.tar.gz</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /opt/webapps</span><br><span class="line">find -maxdepth 1 -name "sellerbar-web-root-*.tar.gz" | xargs -i tar zxvf &#123;&#125;</span><br><span class="line">cd sellerbar-web-root-*</span><br><span class="line">cd bin</span><br><span class="line">./install.sh</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 清理yum缓存使用yum clean 命令， 清理/var/cahche</span></span><br><span class="line">yum clean headers  #清理/var/cache/yum的headers</span><br><span class="line">yum clean packages #清理/var/cache/yum下的软件包</span><br><span class="line">yum clean metadata</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<h3 id="设置git代理"><a href="#设置git代理" class="headerlink" title="设置git代理"></a>设置git代理</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git config --global http.proxy http://account:password@domian:port</span><br></pre></td></tr></table></figure>
+
+<h3 id="手动启动ss服务"><a href="#手动启动ss服务" class="headerlink" title="手动启动ss服务"></a>手动启动ss服务</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ssserver -p 8281 -k password -m rc4-md5 -d start</span><br></pre></td></tr></table></figure>
+
+<p>pwd 显示当前路径</p>
+<p>find 查找绝对路径</p>
+<h3 id="在线安装mysql"><a href="#在线安装mysql" class="headerlink" title="在线安装mysql"></a>在线安装mysql</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">view http://repo.mysql.com</span><br><span class="line">select **community-release-e**的 repo</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /opt</span><br><span class="line">wget http://repo.mysql.com/mysql57-community-release-el7.rpm</span><br><span class="line">sudo rpm -Uvh mysql57-community-release-el7.rpm</span><br><span class="line">sudo yum install mysql -y</span><br><span class="line">grep 'temporary password' /var/log/mysqld.log</span><br></pre></td></tr></table></figure>
+
+<h3 id="在线安装nginx"><a href="#在线安装nginx" class="headerlink" title="在线安装nginx"></a>在线安装nginx</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim /etc/yum.repos.d/nginx.repo</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[nginx]</span><br><span class="line">name=nginx repo</span><br><span class="line">baseurl=http://nginx.org/packages/centos/$releasever/$basearch/</span><br><span class="line">gpgcheck=0</span><br><span class="line">enabled=1</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo yum install nginx -y</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">systemctl start nginx #启动</span><br><span class="line">systemctl stop nginx #停止</span><br><span class="line">systemctl restart nginx #重启</span><br><span class="line">systemctl status nginx #查看运行状态</span><br><span class="line">systemctl enable nginx #开机启动</span><br></pre></td></tr></table></figure>
+
+
+
+<p>配置文件可能会缺少server</p>
+<p>谷歌插件安装位置</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">C:\Users\lucui\AppData\Local\Google\Chrome\User Data\Default\Extensions</span><br></pre></td></tr></table></figure>
+
+<h3 id="更新node-amp-npm"><a href="#更新node-amp-npm" class="headerlink" title="更新node&amp;npm"></a>更新node&amp;npm</h3><p>update node</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">npm install -g n</span><br><span class="line">n latest</span><br></pre></td></tr></table></figure>
+
+<p>update npm</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">npm install -g npm</span><br><span class="line">npm install npm@latest -g</span><br><span class="line">or</span><br><span class="line">npm update -g</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装shadowsocks"><a href="#安装shadowsocks" class="headerlink" title="安装shadowsocks"></a>安装shadowsocks</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install python-setuptools -y</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">pip install shadowsocks</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ssserver -p 8281 -k password -m rc4-md5 -d start</span><br></pre></td></tr></table></figure>
+
+
+
+]]></content>
+      <tags>
+        <tag>linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>JVM排查步骤</title>
     <url>/2020/03/23/JVM%E6%8E%92%E6%9F%A5%E6%AD%A5%E9%AA%A4/</url>
     <content><![CDATA[<h3 id="一-、使用jps获取java应用进程号"><a href="#一-、使用jps获取java应用进程号" class="headerlink" title="一 、使用jps获取java应用进程号"></a>一 、使用jps获取java应用进程号</h3><p>(Java Virtual Machine Process Status Tool)<br>jps主要用来输出JVM中运行的进程状态信息。语法格式如下：</p>
@@ -85,64 +143,6 @@
       </tags>
   </entry>
   <entry>
-    <title>linux常用命令</title>
-    <url>/2020/03/23/LinuxCmd/</url>
-    <content><![CDATA[<h3 id="查看使用容量"><a href="#查看使用容量" class="headerlink" title="查看使用容量"></a>查看使用容量</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">查看当前目录总共占的容量。而不单独列出各子项占用的容量 </span></span><br><span class="line">du -sh </span><br><span class="line"><span class="meta">#</span><span class="bash">查看当前目录下一级子文件和子目录占用的磁盘容量</span></span><br><span class="line">du -lh --max-depth=1</span><br><span class="line"><span class="meta">#</span><span class="bash">统计当前文件夹(目录)大小，并按文件大小排序</span></span><br><span class="line">du -sh * | sort -nr </span><br><span class="line"><span class="meta">#</span><span class="bash">查看指定文件大小</span></span><br><span class="line">du -sk filename</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">find -maxdepth 1 -name "sellerbar-web-root-*.tar.gz" | xargs -i tar zxvf &#123;&#125;*</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">**/sellerbar-web-root-*.tar.gz</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /opt/webapps</span><br><span class="line">find -maxdepth 1 -name "sellerbar-web-root-*.tar.gz" | xargs -i tar zxvf &#123;&#125;</span><br><span class="line">cd sellerbar-web-root-*</span><br><span class="line">cd bin</span><br><span class="line">./install.sh</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 清理yum缓存使用yum clean 命令， 清理/var/cahche</span></span><br><span class="line">yum clean headers  #清理/var/cache/yum的headers</span><br><span class="line">yum clean packages #清理/var/cache/yum下的软件包</span><br><span class="line">yum clean metadata</span><br></pre></td></tr></table></figure>
-
-<a id="more"></a>
-
-<h3 id="设置git代理"><a href="#设置git代理" class="headerlink" title="设置git代理"></a>设置git代理</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git config --global http.proxy http://account:password@domian:port</span><br></pre></td></tr></table></figure>
-
-<h3 id="手动启动ss服务"><a href="#手动启动ss服务" class="headerlink" title="手动启动ss服务"></a>手动启动ss服务</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ssserver -p 8281 -k password -m rc4-md5 -d start</span><br></pre></td></tr></table></figure>
-
-<p>pwd 显示当前路径</p>
-<p>find 查找绝对路径</p>
-<h3 id="在线安装mysql"><a href="#在线安装mysql" class="headerlink" title="在线安装mysql"></a>在线安装mysql</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">view http://repo.mysql.com</span><br><span class="line">select **community-release-e**的 repo</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /opt</span><br><span class="line">wget http://repo.mysql.com/mysql57-community-release-el7.rpm</span><br><span class="line">sudo rpm -Uvh mysql57-community-release-el7.rpm</span><br><span class="line">sudo yum install mysql -y</span><br><span class="line">grep 'temporary password' /var/log/mysqld.log</span><br></pre></td></tr></table></figure>
-
-<h3 id="在线安装nginx"><a href="#在线安装nginx" class="headerlink" title="在线安装nginx"></a>在线安装nginx</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim /etc/yum.repos.d/nginx.repo</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[nginx]</span><br><span class="line">name=nginx repo</span><br><span class="line">baseurl=http://nginx.org/packages/centos/$releasever/$basearch/</span><br><span class="line">gpgcheck=0</span><br><span class="line">enabled=1</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo yum install nginx -y</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">systemctl start nginx #启动</span><br><span class="line">systemctl stop nginx #停止</span><br><span class="line">systemctl restart nginx #重启</span><br><span class="line">systemctl status nginx #查看运行状态</span><br><span class="line">systemctl enable nginx #开机启动</span><br></pre></td></tr></table></figure>
-
-
-
-<p>配置文件可能会缺少server</p>
-<p>谷歌插件安装位置</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">C:\Users\lucui\AppData\Local\Google\Chrome\User Data\Default\Extensions</span><br></pre></td></tr></table></figure>
-
-<h3 id="更新node-amp-npm"><a href="#更新node-amp-npm" class="headerlink" title="更新node&amp;npm"></a>更新node&amp;npm</h3><p>update node</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">npm install -g n</span><br><span class="line">n latest</span><br></pre></td></tr></table></figure>
-
-<p>update npm</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">npm install -g npm</span><br><span class="line">npm install npm@latest -g</span><br><span class="line">or</span><br><span class="line">npm update -g</span><br></pre></td></tr></table></figure>
-
-<h3 id="安装shadowsocks"><a href="#安装shadowsocks" class="headerlink" title="安装shadowsocks"></a>安装shadowsocks</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install python-setuptools -y</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">pip install shadowsocks</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ssserver -p 8281 -k password -m rc4-md5 -d start</span><br></pre></td></tr></table></figure>
-
-
-
-]]></content>
-      <tags>
-        <tag>linux</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>win10 安装anaconda后的环境变量配置</title>
     <url>/2018/07/23/anaconda/</url>
     <content><![CDATA[<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">%</span><span class="bash">ANACONDA_HOME% = C:\Users\mklop\anaconda3</span></span><br></pre></td></tr></table></figure>
@@ -152,19 +152,6 @@
         <tag>win10</tag>
         <tag>python</tag>
         <tag>anaconda</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>cloc 统计文件数 排除指定目录</title>
-    <url>/2020/05/26/cloc/</url>
-    <content><![CDATA[<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> [统计文件数的路径] 必须包含  [要排除的路径]</span></span><br><span class="line">cloc --fullpath --not-match-d 要排除的路径  统计文件数的路径</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <tags>
-        <tag>linux</tag>
-        <tag>cloc</tag>
-        <tag>统计</tag>
-        <tag>工具</tag>
       </tags>
   </entry>
   <entry>
@@ -201,6 +188,19 @@ X.509 PAM 编码(Base64)的后缀是： .PEM .CER .CRT
       </tags>
   </entry>
   <entry>
+    <title>cloc 统计文件数 排除指定目录</title>
+    <url>/2020/05/26/cloc/</url>
+    <content><![CDATA[<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> [统计文件数的路径] 必须包含  [要排除的路径]</span></span><br><span class="line">cloc --fullpath --not-match-d 要排除的路径  统计文件数的路径</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>cloc</tag>
+        <tag>统计</tag>
+        <tag>工具</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>docker阿里云私服</title>
     <url>/2018/11/23/docker/</url>
     <content><![CDATA[<h2 id="1-登录阿里云Docker-Registry"><a href="#1-登录阿里云Docker-Registry" class="headerlink" title="1. 登录阿里云Docker Registry"></a>1. 登录阿里云Docker Registry</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo docker login --username=bcsdamz@126.com registry.cn-hangzhou.aliyuncs.com</span></span><br></pre></td></tr></table></figure>
@@ -222,34 +222,6 @@ X.509 PAM 编码(Base64)的后缀是： .PEM .CER .CRT
       <tags>
         <tag>linux</tag>
         <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>环境配置文件</title>
-    <url>/2019/11/23/env/</url>
-    <content><![CDATA[<h3 id="env-文件内容"><a href="#env-文件内容" class="headerlink" title=".env 文件内容"></a>.env 文件内容</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">PORT=3000</span><br><span class="line">NODE_ENV=development</span><br><span class="line">JWT_SECRET=your-secret-whatever</span><br><span class="line">DATABASE_URL=mongodb://118.190.56.31:17027/rapp</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <tags>
-        <tag>linux</tag>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ambx-server 安装配置</title>
-    <url>/2020/06/29/flask/</url>
-    <content><![CDATA[<h1 id="ambx-server"><a href="#ambx-server" class="headerlink" title="ambx-server"></a>ambx-server</h1><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git clone http://gitlab.retlines.com/actifio/ambx-server.git</span><br></pre></td></tr></table></figure>
-
-<h3 id="install"><a href="#install" class="headerlink" title="install"></a>install</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">mkvirtualenv -p python3 py3_flask</span><br><span class="line"></span><br><span class="line">pip3 install -r requirements.txt</span><br></pre></td></tr></table></figure>
-
-<h3 id="start-project"><a href="#start-project" class="headerlink" title="start project"></a>start project</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">python3 run.oy</span><br><span class="line"></span><br><span class="line">curl http://127.0.0.1:5000/</span><br></pre></td></tr></table></figure>
-
-<h3 id="api-doc"><a href="#api-doc" class="headerlink" title="api doc"></a>api doc</h3><h4 id="generate"><a href="#generate" class="headerlink" title="generate"></a>generate</h4><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">cd doc</span><br><span class="line">sphinx-quickstart</span><br><span class="line">sphinx-apidoc -o source ../src</span><br><span class="line">make clean</span><br><span class="line">make html</span><br></pre></td></tr></table></figure>
-
-<h4 id="config"><a href="#config" class="headerlink" title="config"></a>config</h4><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> doc/<span class="built_in">source</span>/conf.py</span></span><br><span class="line">import os</span><br><span class="line">import sys</span><br><span class="line">sys.path.insert(0, os.path.abspath('../../src/..'))#指向resources目录</span><br><span class="line"></span><br><span class="line">language = 'zh_CN'</span><br><span class="line"></span><br><span class="line">extensions = ['sphinx.ext.autodoc',</span><br><span class="line">    'sphinx.ext.doctest',</span><br><span class="line">    'sphinx.ext.intersphinx',</span><br><span class="line">    'sphinx.ext.todo',</span><br><span class="line">    'sphinx.ext.coverage',</span><br><span class="line">    'sphinx.ext.mathjax']</span><br></pre></td></tr></table></figure>]]></content>
-      <tags>
-        <tag>linux</tag>
-        <tag>python</tag>
       </tags>
   </entry>
   <entry>
@@ -341,6 +313,34 @@ X.509 PAM 编码(Base64)的后缀是： .PEM .CER .CRT
       </tags>
   </entry>
   <entry>
+    <title>环境配置文件</title>
+    <url>/2019/11/23/env/</url>
+    <content><![CDATA[<h3 id="env-文件内容"><a href="#env-文件内容" class="headerlink" title=".env 文件内容"></a>.env 文件内容</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">PORT=3000</span><br><span class="line">NODE_ENV=development</span><br><span class="line">JWT_SECRET=your-secret-whatever</span><br><span class="line">DATABASE_URL=mongodb://118.190.56.31:17027/rapp</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ambx-server 安装配置</title>
+    <url>/2020/06/29/flask/</url>
+    <content><![CDATA[<h1 id="ambx-server"><a href="#ambx-server" class="headerlink" title="ambx-server"></a>ambx-server</h1><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git clone http://gitlab.retlines.com/actifio/ambx-server.git</span><br></pre></td></tr></table></figure>
+
+<h3 id="install"><a href="#install" class="headerlink" title="install"></a>install</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">mkvirtualenv -p python3 py3_flask</span><br><span class="line"></span><br><span class="line">pip3 install -r requirements.txt</span><br></pre></td></tr></table></figure>
+
+<h3 id="start-project"><a href="#start-project" class="headerlink" title="start project"></a>start project</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">python3 run.oy</span><br><span class="line"></span><br><span class="line">curl http://127.0.0.1:5000/</span><br></pre></td></tr></table></figure>
+
+<h3 id="api-doc"><a href="#api-doc" class="headerlink" title="api doc"></a>api doc</h3><h4 id="generate"><a href="#generate" class="headerlink" title="generate"></a>generate</h4><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">cd doc</span><br><span class="line">sphinx-quickstart</span><br><span class="line">sphinx-apidoc -o source ../src</span><br><span class="line">make clean</span><br><span class="line">make html</span><br></pre></td></tr></table></figure>
+
+<h4 id="config"><a href="#config" class="headerlink" title="config"></a>config</h4><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> doc/<span class="built_in">source</span>/conf.py</span></span><br><span class="line">import os</span><br><span class="line">import sys</span><br><span class="line">sys.path.insert(0, os.path.abspath('../../src/..'))#指向resources目录</span><br><span class="line"></span><br><span class="line">language = 'zh_CN'</span><br><span class="line"></span><br><span class="line">extensions = ['sphinx.ext.autodoc',</span><br><span class="line">    'sphinx.ext.doctest',</span><br><span class="line">    'sphinx.ext.intersphinx',</span><br><span class="line">    'sphinx.ext.todo',</span><br><span class="line">    'sphinx.ext.coverage',</span><br><span class="line">    'sphinx.ext.mathjax']</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>git ssh 生成</title>
     <url>/2015/10/23/git-ssh/</url>
     <content><![CDATA[<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">git config --global user.name "lucuicheng"</span><br><span class="line">git config --global user.email "lucuicheng@gmail.com"</span><br><span class="line"></span><br><span class="line">ssh-keygen -t rsa -C "lucuicheng@gmail.com"</span><br></pre></td></tr></table></figure>]]></content>
@@ -350,7 +350,7 @@ X.509 PAM 编码(Base64)的后缀是： .PEM .CER .CRT
       </tags>
   </entry>
   <entry>
-    <title>git ssh 生成</title>
+    <title>gradle windows 10 基础配置</title>
     <url>/2018/11/23/gradle/</url>
     <content><![CDATA[<h3 id="新建变量"><a href="#新建变量" class="headerlink" title="新建变量"></a>新建变量</h3><pre><code>变量名：GRADLE_HOME
 变量值：解压到的目录
@@ -399,6 +399,17 @@ X.509 PAM 编码(Base64)的后缀是： .PEM .CER .CRT
       </tags>
   </entry>
   <entry>
+    <title>mbp 环境配置-profile</title>
+    <url>/2019/06/23/profile/</url>
+    <content><![CDATA[<h3 id="mac-profile-配置文件内容"><a href="#mac-profile-配置文件内容" class="headerlink" title="mac profile 配置文件内容"></a>mac profile 配置文件内容</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> System-wide .profile <span class="keyword">for</span> sh(1)</span></span><br><span class="line"></span><br><span class="line">if [ -x /usr/libexec/path_helper ]; then</span><br><span class="line">	eval `/usr/libexec/path_helper -s`</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">if [ "$&#123;BASH-no&#125;" != "no" ]; then</span><br><span class="line">	[ -r /etc/bashrc ] &amp;&amp; . /etc/bashrc</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_231.jdk/Contents/Home</span><br><span class="line">export PATH=$JAVA_HOME/bin:$PATH</span><br><span class="line">export CLASSPATH=:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar</span><br><span class="line"></span><br><span class="line">export ANDROID_HOME=$HOME/Library/Android/sdk</span><br><span class="line">export PATH=$PATH:$ANDROID_HOME/tools</span><br><span class="line">export PATH=$PATH:$ANDROID_HOME/tools/bin</span><br><span class="line">export PATH=$PATH:$ANDROID_HOME/platform-tools</span><br><span class="line">export PATH=$PATH:$ANDROID_HOME/emulator</span><br><span class="line">export HISTTIMEFORMAT="%F %T `whoami` "</span><br><span class="line"></span><br><span class="line">export http_proxy="127.0.0.1:8118"</span><br><span class="line">export https_proxy="127.0.0.1:8118"</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <tags>
+        <tag>mac</tag>
+        <tag>bash</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>centos7 python3 虚拟环境安装</title>
     <url>/2020/07/15/python_env/</url>
     <content><![CDATA[<h3 id="准备依赖"><a href="#准备依赖" class="headerlink" title="准备依赖"></a>准备依赖</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">pip install virtualenv</span><br><span class="line"></span><br><span class="line">pip install virtualenvwrapper</span><br></pre></td></tr></table></figure>
@@ -415,14 +426,12 @@ X.509 PAM 编码(Base64)的后缀是： .PEM .CER .CRT
       </tags>
   </entry>
   <entry>
-    <title>mbp 环境配置-profile</title>
-    <url>/2019/06/23/profile/</url>
-    <content><![CDATA[<h3 id="mac-profile-配置文件内容"><a href="#mac-profile-配置文件内容" class="headerlink" title="mac profile 配置文件内容"></a>mac profile 配置文件内容</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> System-wide .profile <span class="keyword">for</span> sh(1)</span></span><br><span class="line"></span><br><span class="line">if [ -x /usr/libexec/path_helper ]; then</span><br><span class="line">	eval `/usr/libexec/path_helper -s`</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">if [ "$&#123;BASH-no&#125;" != "no" ]; then</span><br><span class="line">	[ -r /etc/bashrc ] &amp;&amp; . /etc/bashrc</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_231.jdk/Contents/Home</span><br><span class="line">export PATH=$JAVA_HOME/bin:$PATH</span><br><span class="line">export CLASSPATH=:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar</span><br><span class="line"></span><br><span class="line">export ANDROID_HOME=$HOME/Library/Android/sdk</span><br><span class="line">export PATH=$PATH:$ANDROID_HOME/tools</span><br><span class="line">export PATH=$PATH:$ANDROID_HOME/tools/bin</span><br><span class="line">export PATH=$PATH:$ANDROID_HOME/platform-tools</span><br><span class="line">export PATH=$PATH:$ANDROID_HOME/emulator</span><br><span class="line">export HISTTIMEFORMAT="%F %T `whoami` "</span><br><span class="line"></span><br><span class="line">export http_proxy="127.0.0.1:8118"</span><br><span class="line">export https_proxy="127.0.0.1:8118"</span><br></pre></td></tr></table></figure>
-
-]]></content>
+    <title>ss5代理的配置基本安装</title>
+    <url>/2020/03/23/ss5/</url>
+    <content><![CDATA[<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"> wget https://nchc.dl.sourceforge.net/project/ss5/ss5/3.8.9-8/ss5-3.8.9-8.tar.gz</span><br><span class="line"> </span><br><span class="line"> yum -y install gcc automake make</span><br><span class="line"> </span><br><span class="line">yum -y install pam-devel openldap-devel cyrus-sasl-devel openssl-devel</span><br><span class="line"></span><br><span class="line">tar xvf ss5-3.8.9-8.tar.gz</span><br><span class="line"></span><br><span class="line">cd ss5-3.8.9-8</span><br><span class="line"></span><br><span class="line">./configure &amp;&amp; make &amp;&amp; make install</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 修改配置文件</span></span><br><span class="line">/etc/opt/ss5/ss5.conf</span><br><span class="line">auth    0.0.0.0/0               -               -</span><br><span class="line">permit -	0.0.0.0/0	-	0.0.0.0/0	-	-	-	-	-	</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 端口ip文件，取消注释</span></span><br><span class="line">/etc/sysconfig/ss5</span><br><span class="line"><span class="meta">#</span><span class="bash"> 改成如下内容</span></span><br><span class="line">SS5_OPTS=" -u root -b 0.0.0.0:1080" # 端口自定义，默认1080</span><br><span class="line"></span><br><span class="line">chmod 755 /etc/rc.d/init.d/ss5</span><br><span class="line"></span><br><span class="line">service ss5 start</span><br><span class="line"></span><br><span class="line">netstat -lanp | grep *port</span><br></pre></td></tr></table></figure>]]></content>
       <tags>
-        <tag>mac</tag>
-        <tag>bash</tag>
+        <tag>linux</tag>
+        <tag>ss5</tag>
       </tags>
   </entry>
   <entry>
@@ -473,15 +482,6 @@ X.509 PAM 编码(Base64)的后缀是： .PEM .CER .CRT
       </tags>
   </entry>
   <entry>
-    <title>ss5代理的配置基本安装</title>
-    <url>/2020/03/23/ss5/</url>
-    <content><![CDATA[<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"> wget https://nchc.dl.sourceforge.net/project/ss5/ss5/3.8.9-8/ss5-3.8.9-8.tar.gz</span><br><span class="line"> </span><br><span class="line"> yum -y install gcc automake make</span><br><span class="line"> </span><br><span class="line">yum -y install pam-devel openldap-devel cyrus-sasl-devel openssl-devel</span><br><span class="line"></span><br><span class="line">tar xvf ss5-3.8.9-8.tar.gz</span><br><span class="line"></span><br><span class="line">cd ss5-3.8.9-8</span><br><span class="line"></span><br><span class="line">./configure &amp;&amp; make &amp;&amp; make install</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 修改配置文件</span></span><br><span class="line">/etc/opt/ss5/ss5.conf</span><br><span class="line">auth    0.0.0.0/0               -               -</span><br><span class="line">permit -	0.0.0.0/0	-	0.0.0.0/0	-	-	-	-	-	</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 端口ip文件，取消注释</span></span><br><span class="line">/etc/sysconfig/ss5</span><br><span class="line"><span class="meta">#</span><span class="bash"> 改成如下内容</span></span><br><span class="line">SS5_OPTS=" -u root -b 0.0.0.0:1080" # 端口自定义，默认1080</span><br><span class="line"></span><br><span class="line">chmod 755 /etc/rc.d/init.d/ss5</span><br><span class="line"></span><br><span class="line">service ss5 start</span><br><span class="line"></span><br><span class="line">netstat -lanp | grep *port</span><br></pre></td></tr></table></figure>]]></content>
-      <tags>
-        <tag>linux</tag>
-        <tag>ss5</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>windows10 wsl 出现 Exit code 4294967295</title>
     <url>/2020/05/25/wsl/</url>
     <content><![CDATA[<h3 id="53-端口被占用"><a href="#53-端口被占用" class="headerlink" title="53 端口被占用"></a>53 端口被占用</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 检查是否有vpn工具（easy connect, any connect 等）,自动开启并占用了53 端口</span></span><br></pre></td></tr></table></figure>
@@ -501,18 +501,6 @@ X.509 PAM 编码(Base64)的后缀是： .PEM .CER .CRT
       <tags>
         <tag>Windows10</tag>
         <tag>WSL</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>mbp 环境配置-zsh</title>
-    <url>/2018/07/23/zsh%E9%85%8D%E7%BD%AE/</url>
-    <content><![CDATA[<h3 id="zsh-命令配置"><a href="#zsh-命令配置" class="headerlink" title="zsh 命令配置"></a>zsh 命令配置</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">alias cls='clear'</span><br><span class="line">alias ll='ls -alF'</span><br><span class="line">alias la='ls -A'</span><br><span class="line">alias l='ls -CF'</span><br><span class="line">alias gci='git commit .'</span><br><span class="line">alias gad='git add .'</span><br><span class="line">alias gpl='git pull'</span><br><span class="line">alias gps='git push' </span><br><span class="line">alias vi='vim'</span><br><span class="line">alias javac="javac -J-Dfile.encoding=utf8"</span><br><span class="line">alias grep="grep --color=auto"</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">  以下不推荐</span></span><br><span class="line">alias -s html=mate   # 在命令行直接输入后缀为 html 的文件名，会在 TextMate 中打开</span><br><span class="line">alias -s rb=mate     # 在命令行直接输入 ruby 文件，会在 TextMate 中打开</span><br><span class="line">alias -s py=vi       # 在命令行直接输入 python 文件，会用 vim 中打开，以下类似</span><br><span class="line">alias -s js=vi</span><br><span class="line">alias -s c=vi</span><br><span class="line">alias -s java=vi</span><br><span class="line">alias -s txt=vi</span><br><span class="line">alias -s gz='tar -xzvf'</span><br><span class="line">alias -s tgz='tar -xzvf'</span><br><span class="line">alias -s zip='unzip'</span><br><span class="line">alias -s bz2='tar -xjvf'</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <tags>
-        <tag>mac</tag>
-        <tag>bash</tag>
-        <tag>zsh</tag>
       </tags>
   </entry>
   <entry>
@@ -541,6 +529,18 @@ http://mirrors.163.com/centos/7/os/x86_64/Packages/yum-utils-1.1.31-53.el7.noarc
         <tag>linux</tag>
         <tag>python</tag>
         <tag>yum</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>mbp 环境配置-zsh</title>
+    <url>/2018/07/23/zsh%E9%85%8D%E7%BD%AE/</url>
+    <content><![CDATA[<h3 id="zsh-命令配置"><a href="#zsh-命令配置" class="headerlink" title="zsh 命令配置"></a>zsh 命令配置</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">alias cls='clear'</span><br><span class="line">alias ll='ls -alF'</span><br><span class="line">alias la='ls -A'</span><br><span class="line">alias l='ls -CF'</span><br><span class="line">alias gci='git commit .'</span><br><span class="line">alias gad='git add .'</span><br><span class="line">alias gpl='git pull'</span><br><span class="line">alias gps='git push' </span><br><span class="line">alias vi='vim'</span><br><span class="line">alias javac="javac -J-Dfile.encoding=utf8"</span><br><span class="line">alias grep="grep --color=auto"</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">  以下不推荐</span></span><br><span class="line">alias -s html=mate   # 在命令行直接输入后缀为 html 的文件名，会在 TextMate 中打开</span><br><span class="line">alias -s rb=mate     # 在命令行直接输入 ruby 文件，会在 TextMate 中打开</span><br><span class="line">alias -s py=vi       # 在命令行直接输入 python 文件，会用 vim 中打开，以下类似</span><br><span class="line">alias -s js=vi</span><br><span class="line">alias -s c=vi</span><br><span class="line">alias -s java=vi</span><br><span class="line">alias -s txt=vi</span><br><span class="line">alias -s gz='tar -xzvf'</span><br><span class="line">alias -s tgz='tar -xzvf'</span><br><span class="line">alias -s zip='unzip'</span><br><span class="line">alias -s bz2='tar -xjvf'</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <tags>
+        <tag>mac</tag>
+        <tag>bash</tag>
+        <tag>zsh</tag>
       </tags>
   </entry>
 </search>
