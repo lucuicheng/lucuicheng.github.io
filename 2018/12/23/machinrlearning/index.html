@@ -28,7 +28,7 @@
 <meta property="og:description" content="设置终端翻墙script1234set http_proxy&#x3D;127.0.0.1:1080set https_proxy&#x3D;127.0.0.1:1080# 测试curl -v http:&#x2F;&#x2F;www.google.com  创建虚拟环境1conda create -n pytorch python&#x3D;3.7 直接安装script12conda install pytorch torchvision cu">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2018-12-23T02:40:33.000Z">
-<meta property="article:modified_time" content="2020-08-20T08:06:45.226Z">
+<meta property="article:modified_time" content="2020-08-20T09:49:48.433Z">
 <meta property="article:author" content="Lucuicheng">
 <meta property="article:tag" content="pytorch">
 <meta property="article:tag" content="tensorflow">
@@ -214,6 +214,8 @@
         </h1>
 
         <div class="post-meta">
+
+          
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-calendar"></i>
@@ -227,7 +229,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-08-20 16:06:45" itemprop="dateModified" datetime="2020-08-20T16:06:45+08:00">2020-08-20</time>
+                <time title="修改时间：2020-08-20 17:49:48" itemprop="dateModified" datetime="2020-08-20T17:49:48+08:00">2020-08-20</time>
               </span>
 
           
@@ -243,7 +245,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>825</span>
+              <span>959</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -269,7 +271,10 @@
 
 <h3 id="问题解决"><a href="#问题解决" class="headerlink" title="问题解决"></a>问题解决</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">打开终端，提示 “无法加载文件C:\XXX\WindowsPowerShell\profile.ps1，</span><br><span class="line">因为在此系统上禁止运行脚本” 的错误</span><br><span class="line"></span><br><span class="line">FIX</span><br><span class="line"></span><br><span class="line">1. 以管理员身份运行PowerShell</span><br><span class="line"></span><br><span class="line">2. 执行：get-ExecutionPolicy，回复Restricted，表示状态是禁止的</span><br><span class="line"></span><br><span class="line">3.执行：set-ExecutionPolicy RemoteSigned即可 选择 Y </span><br><span class="line"></span><br><span class="line">一定要以管理员的身份运行PowerShell，不是cmd窗口</span><br></pre></td></tr></table></figure>
 
-<h3 id="国内源"><a href="#国内源" class="headerlink" title="国内源"></a>国内源</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ssl_verify: true</span><br><span class="line">channels:</span><br><span class="line">  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/</span><br><span class="line">  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge</span><br><span class="line">  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/msys2/</span><br><span class="line">  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/</span><br><span class="line">  - https://mirrors.ustc.edu.cn/anaconda/pkgs/main/</span><br><span class="line">  - defaults</span><br><span class="line">show_channel_urls: true</span><br></pre></td></tr></table></figure>
+<h3 id="国内源"><a href="#国内源" class="headerlink" title="国内源"></a>国内源</h3><pre><code>修改位置为  ‪C:\Users\mklop\.condarc</code></pre><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ssl_verify: true</span><br><span class="line">channels:</span><br><span class="line">  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/</span><br><span class="line">  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge</span><br><span class="line">  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/msys2/</span><br><span class="line">  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/</span><br><span class="line">  - https://mirrors.ustc.edu.cn/anaconda/pkgs/main/</span><br><span class="line">  - defaults</span><br><span class="line">show_channel_urls: true</span><br></pre></td></tr></table></figure>
+
+<h3 id="离线安装部分内容"><a href="#离线安装部分内容" class="headerlink" title="离线安装部分内容"></a>离线安装部分内容</h3><pre><code>注意需要在包的位置运行， 下载地址 报错信息中获取</code></pre><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install --use-local pytorch-1.6.0-py3.7_cuda102_cudnn7_0.tar.bz2</span><br></pre></td></tr></table></figure>
+
     </div>
 
     
@@ -371,7 +376,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#设置终端翻墙"><span class="nav-number">1.</span> <span class="nav-text">设置终端翻墙</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建虚拟环境"><span class="nav-number">2.</span> <span class="nav-text">创建虚拟环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#直接安装"><span class="nav-number">3.</span> <span class="nav-text">直接安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问题解决"><span class="nav-number">4.</span> <span class="nav-text">问题解决</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#国内源"><span class="nav-number">5.</span> <span class="nav-text">国内源</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#设置终端翻墙"><span class="nav-number">1.</span> <span class="nav-text">设置终端翻墙</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建虚拟环境"><span class="nav-number">2.</span> <span class="nav-text">创建虚拟环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#直接安装"><span class="nav-number">3.</span> <span class="nav-text">直接安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问题解决"><span class="nav-number">4.</span> <span class="nav-text">问题解决</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#国内源"><span class="nav-number">5.</span> <span class="nav-text">国内源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#离线安装部分内容"><span class="nav-number">6.</span> <span class="nav-text">离线安装部分内容</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -385,7 +390,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-count">27</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -398,7 +403,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-count">30</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
