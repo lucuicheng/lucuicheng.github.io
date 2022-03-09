@@ -818,6 +818,86 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lucuicheng.github.io/2019/07/23/teamcity%20base%20install/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Lucuicheng">
+      <meta itemprop="description" content="记录日常使用的一些内容">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cuicheng's 博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/07/23/teamcity%20base%20install/" class="post-title-link" itemprop="url">team-city base install</a>
+        </h2>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-23 10:40:33" itemprop="dateCreated datePublished" datetime="2019-07-23T10:40:33+08:00">2019-07-23</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>650</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker run -it --name youtrack-instance \</span><br><span class="line">-v /opt/youtrack/data:/opt/youtrack/data \</span><br><span class="line">-v /opt/youtrack/conf:/opt/youtrack/conf \</span><br><span class="line">-v /opt/youtrack/logs:/opt/youtrack/logs \</span><br><span class="line">-v /opt/youtrack/backups:/opt/youtrack/backups \</span><br><span class="line">-p 8081:8080 \</span><br><span class="line">jetbrains/youtrack:2022.1.43563</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run -it --name teamcity-server-instance \</span><br><span class="line">-v /data/teamcity_server/datadir:/data/teamcity_server/datadir \</span><br><span class="line">-v /opt/teamcity/logs:/opt/teamcity/logs \</span><br><span class="line">-p 8111:8111 \</span><br><span class="line">jetbrains/teamcity-server</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker run -it --name eamcity-agent -e SERVER_URL=<span class="string">"http://10.0.0.24:8111"</span> \</span><br><span class="line">-v /data/teamcity_agent/conf:/data/teamcity_agent/conf \</span><br><span class="line">jetbrains/teamcity-agent</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum-config-manager -enable 'rhel-7-server-rhui-optional-rpms\*'</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://lucuicheng.github.io/2019/06/23/profile/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -875,108 +955,6 @@
           <h3 id="mac-profile-配置文件内容"><a href="#mac-profile-配置文件内容" class="headerlink" title="mac profile 配置文件内容"></a>mac profile 配置文件内容</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> System-wide .profile <span class="keyword">for</span> sh(1)</span></span><br><span class="line"></span><br><span class="line">if [ -x /usr/libexec/path_helper ]; then</span><br><span class="line">	eval `/usr/libexec/path_helper -s`</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">if [ "$&#123;BASH-no&#125;" != "no" ]; then</span><br><span class="line">	[ -r /etc/bashrc ] &amp;&amp; . /etc/bashrc</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_231.jdk/Contents/Home</span><br><span class="line">export PATH=$JAVA_HOME/bin:$PATH</span><br><span class="line">export CLASSPATH=:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar</span><br><span class="line"></span><br><span class="line">export ANDROID_HOME=$HOME/Library/Android/sdk</span><br><span class="line">export PATH=$PATH:$ANDROID_HOME/tools</span><br><span class="line">export PATH=$PATH:$ANDROID_HOME/tools/bin</span><br><span class="line">export PATH=$PATH:$ANDROID_HOME/platform-tools</span><br><span class="line">export PATH=$PATH:$ANDROID_HOME/emulator</span><br><span class="line">export HISTTIMEFORMAT="%F %T `whoami` "</span><br><span class="line"></span><br><span class="line">export http_proxy="127.0.0.1:8118"</span><br><span class="line">export https_proxy="127.0.0.1:8118"</span><br></pre></td></tr></table></figure>
 
 
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lucuicheng.github.io/2019/05/19/docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Lucuicheng">
-      <meta itemprop="description" content="记录日常使用的一些内容">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Cuicheng's 博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/05/19/docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" class="post-title-link" itemprop="url">docker常用命令</a>
-        </h2>
-
-        <div class="post-meta">
-
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-05-19 10:40:33" itemprop="dateCreated datePublished" datetime="2019-05-19T10:40:33+08:00">2019-05-19</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="list-docker"><a href="#list-docker" class="headerlink" title="list docker"></a>list docker</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps --format "table &#123;&#123;.ID&#125;&#125;\t&#123;&#123;.Names&#125;&#125;\t&#123;&#123;.Status&#125;&#125;\t&#123;&#123;.Ports&#125;&#125;" -a</span><br></pre></td></tr></table></figure>
-
-<h3 id="国内加速地址"><a href="#国内加速地址" class="headerlink" title="国内加速地址"></a>国内加速地址</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">Docker中国区官方镜像</span></span><br><span class="line">https://registry.docker-cn.com</span><br><span class="line"><span class="meta">#</span><span class="bash">网易</span></span><br><span class="line">http://hub-mirror.c.163.com</span><br><span class="line"><span class="meta">#</span><span class="bash">中国科技大学</span></span><br><span class="line">https://docker.mirrors.ustc.edu.cn</span><br></pre></td></tr></table></figure>
-
-<h3 id="consul"><a href="#consul" class="headerlink" title="consul"></a>consul</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull consul</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir -p /Users/mklop/data/consul</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -d -p 8500:8500 -v /Users/mklop/data/consul:/consul/data -e CONSUL_BIND_INTERFACE='eth0' --name=consul1 consul agent -server -bootstrap -ui -client='0.0.0.0'</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir -p /opt/data/consul</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -d --restart=always -p 8500:8500 -v /opt/data/consul:/consul/data -e CONSUL_BIND_INTERFACE='eth0' --name=consul-master consul agent -server -bootstrap -ui -client='0.0.0.0'</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/05/19/docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
       
     </div>
 
@@ -1060,7 +1038,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-count">32</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1073,7 +1051,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-count">36</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1117,7 +1095,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">23 分钟</span>
+    <span title="站点阅读时长">24 分钟</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>

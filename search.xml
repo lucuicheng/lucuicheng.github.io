@@ -404,6 +404,23 @@ X.509 PAM 编码(Base64)的后缀是： .PEM .CER .CRT
       </tags>
   </entry>
   <entry>
+    <title>team-city base install</title>
+    <url>/2019/07/23/teamcity%20base%20install/</url>
+    <content><![CDATA[<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -it --name youtrack-instance \</span><br><span class="line">-v /opt/youtrack/data:/opt/youtrack/data \</span><br><span class="line">-v /opt/youtrack/conf:/opt/youtrack/conf \</span><br><span class="line">-v /opt/youtrack/logs:/opt/youtrack/logs \</span><br><span class="line">-v /opt/youtrack/backups:/opt/youtrack/backups \</span><br><span class="line">-p 8081:8080 \</span><br><span class="line">jetbrains/youtrack:2022.1.43563</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -it --name teamcity-server-instance \</span><br><span class="line">-v /data/teamcity_server/datadir:/data/teamcity_server/datadir \</span><br><span class="line">-v /opt/teamcity/logs:/opt/teamcity/logs \</span><br><span class="line">-p 8111:8111 \</span><br><span class="line">jetbrains/teamcity-server</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -it --name eamcity-agent -e SERVER_URL=<span class="string">"http://10.0.0.24:8111"</span> \</span><br><span class="line">-v /data/teamcity_agent/conf:/data/teamcity_agent/conf \</span><br><span class="line">jetbrains/teamcity-agent</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum-config-manager -enable 'rhel-7-server-rhui-optional-rpms\*'</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>docker</tag>
+        <tag>ci</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>mbp 环境配置-profile</title>
     <url>/2019/06/23/profile/</url>
     <content><![CDATA[<h3 id="mac-profile-配置文件内容"><a href="#mac-profile-配置文件内容" class="headerlink" title="mac profile 配置文件内容"></a>mac profile 配置文件内容</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> System-wide .profile <span class="keyword">for</span> sh(1)</span></span><br><span class="line"></span><br><span class="line">if [ -x /usr/libexec/path_helper ]; then</span><br><span class="line">	eval `/usr/libexec/path_helper -s`</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">if [ "$&#123;BASH-no&#125;" != "no" ]; then</span><br><span class="line">	[ -r /etc/bashrc ] &amp;&amp; . /etc/bashrc</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_231.jdk/Contents/Home</span><br><span class="line">export PATH=$JAVA_HOME/bin:$PATH</span><br><span class="line">export CLASSPATH=:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar</span><br><span class="line"></span><br><span class="line">export ANDROID_HOME=$HOME/Library/Android/sdk</span><br><span class="line">export PATH=$PATH:$ANDROID_HOME/tools</span><br><span class="line">export PATH=$PATH:$ANDROID_HOME/tools/bin</span><br><span class="line">export PATH=$PATH:$ANDROID_HOME/platform-tools</span><br><span class="line">export PATH=$PATH:$ANDROID_HOME/emulator</span><br><span class="line">export HISTTIMEFORMAT="%F %T `whoami` "</span><br><span class="line"></span><br><span class="line">export http_proxy="127.0.0.1:8118"</span><br><span class="line">export https_proxy="127.0.0.1:8118"</span><br></pre></td></tr></table></figure>
@@ -583,7 +600,9 @@ X.509 PAM 编码(Base64)的后缀是： .PEM .CER .CRT
     <url>/2018/07/23/anaconda/</url>
     <content><![CDATA[<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">%</span><span class="bash">ANACONDA_HOME% = C:\Users\mklop\anaconda3</span></span><br></pre></td></tr></table></figure>
 
-<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">%</span><span class="bash">ANACONDA_HOME%</span></span><br><span class="line"><span class="meta">%</span><span class="bash">ANACONDA_HOME%\Scripts</span></span><br><span class="line"><span class="meta">%</span><span class="bash">ANACONDA_HOME%\Library\bin</span></span><br><span class="line"><span class="meta">%</span><span class="bash">ANACONDA_HOME%\Library\usr\bin</span></span><br><span class="line"><span class="meta">%</span><span class="bash">ANACONDA_HOME%\Library\mingw-w64\bin</span></span><br></pre></td></tr></table></figure>]]></content>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">%</span><span class="bash">ANACONDA_HOME%</span></span><br><span class="line"><span class="meta">%</span><span class="bash">ANACONDA_HOME%\Scripts</span></span><br><span class="line"><span class="meta">%</span><span class="bash">ANACONDA_HOME%\Library\bin</span></span><br><span class="line"><span class="meta">%</span><span class="bash">ANACONDA_HOME%\Library\usr\bin</span></span><br><span class="line"><span class="meta">%</span><span class="bash">ANACONDA_HOME%\Library\mingw-w64\bin</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
       <tags>
         <tag>win10</tag>
         <tag>python</tag>
