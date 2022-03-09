@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lucuicheng.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="一 、使用jps获取java应用进程号(Java Virtual Machine Process Status Tool)jps主要用来输出JVM中运行的进程状态信息。语法格式如下： 12345678910111213jps    [options]      [hostid]    如果不指定hostid就默认为当前主机或服务器。    命令行参数选项说明如下：    -q # 不输出类名、Ja">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM排查步骤">
+<meta property="og:url" content="http://lucuicheng.github.io/2020/03/23/JVM%E6%8E%92%E6%9F%A5%E6%AD%A5%E9%AA%A4/index.html">
+<meta property="og:site_name" content="Cuicheng&#39;s 博客">
+<meta property="og:description" content="一 、使用jps获取java应用进程号(Java Virtual Machine Process Status Tool)jps主要用来输出JVM中运行的进程状态信息。语法格式如下： 12345678910111213jps    [options]      [hostid]    如果不指定hostid就默认为当前主机或服务器。    命令行参数选项说明如下：    -q # 不输出类名、Ja">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-03-23T02:40:33.000Z">
+<meta property="article:modified_time" content="2022-03-09T06:56:50.264Z">
+<meta property="article:author" content="Lucuicheng">
+<meta property="article:tag" content="jvm">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://lucuicheng.github.io/2020/03/23/JVM%E6%8E%92%E6%9F%A5%E6%AD%A5%E9%AA%A4/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>JVM排查步骤 | Cuicheng's 博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Cuicheng's 博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">日啖荔枝三百颗 不辞长作岭南人</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lucuicheng.github.io/2020/03/23/JVM%E6%8E%92%E6%9F%A5%E6%AD%A5%E9%AA%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Lucuicheng">
+      <meta itemprop="description" content="记录日常使用的一些内容">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cuicheng's 博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JVM排查步骤
+        </h1>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-03-23 10:40:33" itemprop="dateCreated datePublished" datetime="2020-03-23T10:40:33+08:00">2020-03-23</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="一-、使用jps获取java应用进程号"><a href="#一-、使用jps获取java应用进程号" class="headerlink" title="一 、使用jps获取java应用进程号"></a>一 、使用jps获取java应用进程号</h3><p>(Java Virtual Machine Process Status Tool)<br>jps主要用来输出JVM中运行的进程状态信息。语法格式如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">jps    [options]      [hostid]</span><br><span class="line"></span><br><span class="line">    如果不指定hostid就默认为当前主机或服务器。</span><br><span class="line"></span><br><span class="line">    命令行参数选项说明如下：</span><br><span class="line">    </span><br><span class="line">-q # 不输出类名、Jar名和传入main方法的参数</span><br><span class="line"></span><br><span class="line">-m # 输出传入main方法的参数</span><br><span class="line"></span><br><span class="line">-l # 输出main类或Jar的全限名</span><br><span class="line"></span><br><span class="line">-v # 输出传入JVM的参数</span><br></pre></td></tr></table></figure>
+
+<h3 id="二-、通过进程号，找出该进程内最耗费CPU的线程"><a href="#二-、通过进程号，找出该进程内最耗费CPU的线程" class="headerlink" title="二 、通过进程号，找出该进程内最耗费CPU的线程,"></a>二 、通过进程号，找出该进程内最耗费CPU的线程,</h3><p>top -Hp pid (常用推荐) 获取线程ID，跟进内存消耗进行选择线程ID号 得到 21742</p>
+<p>IME列就是各个Java线程耗费的CPU时间，CPU时间最长的是线程ID为21742的线程</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">printf "%x\n" 21742</span><br></pre></td></tr></table></figure>
+
+<p>得到21742的十六进制值为54ee，下面会用到。 </p>
+<p>使用printf “%x\n” 线程ID 转换为16进制值 或者手工计算线程ID转换为16进制值</p>
+<p>也可以使用glances 或者其他内存可视化工具，直接进行分析</p>
+<a id="more"></a>
+
+<h3 id="三-、使用jstack查询消耗内存定位值代码层面。"><a href="#三-、使用jstack查询消耗内存定位值代码层面。" class="headerlink" title="三 、使用jstack查询消耗内存定位值代码层面。"></a>三 、使用jstack查询消耗内存定位值代码层面。</h3><p>语法格式为：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jstack 进程号 |grep （转换后的16进制线程ID值) ,可定位至代码层面。</span><br></pre></td></tr></table></figure>
+<p>例子</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:/# jstack 21711 | grep 54ee</span><br><span class="line"></span><br><span class="line">"PollIntervalRetrySchedulerThread" prio=10 tid=0x00007f950043e000 nid=0x54ee in Object.wait() [0x00007f94c6eda000]</span><br></pre></td></tr></table></figure>
+
+<p>可以看到CPU消耗在PollIntervalRetrySchedulerThread这个类的Object.wait()</p>
+<p>jstack主要用来查看某个Java进程内的线程堆栈信息。语法格式如下： </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">jstack [option] pid</span><br><span class="line"></span><br><span class="line">jstack [option] executable core</span><br><span class="line"></span><br><span class="line">jstack [option] [server-id@]remote-hostname-or-ip</span><br></pre></td></tr></table></figure>
+
+<p>命令行参数选项说明如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-l pid # 来观察锁持有情况</span><br><span class="line">-l long listings # 会打印出额外的锁信息，在发生死锁时可以用</span><br><span class="line">-m mixed mode # 不仅会输出Java堆栈信息，还会输出C/C++堆栈信息（比如Native方法）</span><br></pre></td></tr></table></figure>
+<p>jstack可以定位到线程堆栈，根据堆栈信息我们可以定位到具体代码，所以它在JVM性能调优中使用得非常多。下面我们来一个实例找出某个Java进程中最耗费CPU的Java线程并定位堆栈信息，用到的命令有ps、top、printf、jstack、grep。</p>
+<h3 id="四-、jstat（JVM统计监测工具）监控FullGC情况，获取系统FullGC的频率。"><a href="#四-、jstat（JVM统计监测工具）监控FullGC情况，获取系统FullGC的频率。" class="headerlink" title="四 、jstat（JVM统计监测工具）监控FullGC情况，获取系统FullGC的频率。"></a>四 、jstat（JVM统计监测工具）监控FullGC情况，获取系统FullGC的频率。</h3><p>语法格式如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">jstat [ generalOption | outputOptions vmid [interval[s|ms] [count]] ]</span><br></pre></td></tr></table></figure>
+
+<p>例子：vmid是Java虚拟机ID，在Linux/Unix系统上一般就是进程ID。interval是采样时间间隔。count是采样数目。比如下面输出的是GC信息，采样时间间隔为250ms，采样数为4：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:/# jstat -gc 21711 250 4</span><br><span class="line"></span><br><span class="line">S0C    S1C    S0U    S1U      EC       EU        OC         OU       PC     PU    YGC     YGCT    FGC    FGCT     GCT   </span><br><span class="line"></span><br><span class="line">192.0  192.0   64.0   0.0    6144.0   1854.9   32000.0     4111.6   55296.0 25472.7    702    0.431   3      0.218    0.649</span><br><span class="line"></span><br><span class="line">192.0  192.0   64.0   0.0    6144.0   1972.2   32000.0     4111.6   55296.0 25472.7    702    0.431   3      0.218    0.649</span><br><span class="line"></span><br><span class="line">192.0  192.0   64.0   0.0    6144.0   1972.2   32000.0     4111.6   55296.0 25472.7    702    0.431   3      0.218    0.649</span><br><span class="line"></span><br><span class="line">192.0  192.0   64.0   0.0    6144.0   2109.7   32000.0     4111.6   55296.0 25472.7    702    0.431   3      0.218    0.649</span><br></pre></td></tr></table></figure>
+
+<p>要明白上面各列的意义，先看JVM堆内存布局：<br>可以看出：</p>
+<p>堆内存 = 年轻代 + 年老代 + 永久代<br>年轻代 = Eden区 + 两个Survivor区（From和To）</p>
+<p>现在来解释各列含义：</p>
+<p>S0C、S1C、S0U、S1U：Survivor 0/1区容量（Capacity）和使用量（Used）</p>
+<p>EC、EU：Eden区容量和使用量</p>
+<p>OC、OU：年老代容量和使用量</p>
+<p>PC、PU：永久代容量和使用量</p>
+<p>YGC、YGT：年轻代GC次数和GC耗时</p>
+<p>FGC、FGCT：Full GC次数和Full GC耗时</p>
+<p>GCT：GC总耗时</p>
+<h3 id="五、-jmap（Memory-Map）和jhat（Java-Heap-Analysis-Tool）"><a href="#五、-jmap（Memory-Map）和jhat（Java-Heap-Analysis-Tool）" class="headerlink" title="五、 jmap（Memory Map）和jhat（Java Heap Analysis Tool）"></a>五、 jmap（Memory Map）和jhat（Java Heap Analysis Tool）</h3><p>jmap用来查看堆内存使用状况，一般结合jhat使用。<br>jmap语法格式如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">jmap [option] pid</span><br><span class="line"></span><br><span class="line">jmap [option] executable core</span><br><span class="line"></span><br><span class="line">jmap [option] [server-id@]remote-hostname-or-ip</span><br></pre></td></tr></table></figure>
+
+<p>如果运行在64位JVM上，可能需要指定-J-d64命令选项参数。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmap -permstat pid</span><br></pre></td></tr></table></figure>
+<p>打印进程的类加载器和类加载器加载的持久代对象信息，输出：类加载器名称、对象是否存活（不可靠）、对象地址、父类加载器、已加载的类大小等信息：</p>
+<p>使用jmap -heap pid查看进程堆内存使用情况，包括使用的GC算法、堆配置参数和各代中堆内存使用情况。比例子：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:/# jmap -heap 21711</span><br><span class="line"></span><br><span class="line">Attaching to process ID 21711, please wait...</span><br><span class="line"></span><br><span class="line">Debugger attached successfully.</span><br><span class="line"></span><br><span class="line">Server compiler detected.</span><br><span class="line"></span><br><span class="line">JVM version is 20.10-b01</span><br><span class="line"></span><br><span class="line">using thread-local object allocation.</span><br><span class="line"></span><br><span class="line">Parallel GC with 4 thread(s)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Heap Configuration:</span><br><span class="line"></span><br><span class="line">MinHeapFreeRatio = 40   </span><br><span class="line"></span><br><span class="line">MaxHeapFreeRatio = 70   </span><br><span class="line"></span><br><span class="line">MaxHeapSize      = 2067791872 (1972.0MB)</span><br><span class="line"></span><br><span class="line">NewSize          = 1310720 (1.25MB)</span><br><span class="line"></span><br><span class="line">MaxNewSize       = 17592186044415 MB</span><br><span class="line"></span><br><span class="line">OldSize          = 5439488 (5.1875MB)</span><br><span class="line"></span><br><span class="line">NewRatio         = 2   </span><br><span class="line"></span><br><span class="line">SurvivorRatio    = 8   </span><br><span class="line"></span><br><span class="line">PermSize         = 21757952 (20.75MB)</span><br><span class="line"></span><br><span class="line">MaxPermSize      = 85983232 (82.0MB)</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">Heap Usage:</span><br><span class="line"></span><br><span class="line">PS Young Generation</span><br><span class="line"></span><br><span class="line">Eden Space:</span><br><span class="line"></span><br><span class="line">   capacity = 6422528 (6.125MB)</span><br><span class="line"></span><br><span class="line">   used     = 5445552 (5.1932830810546875MB)</span><br><span class="line"></span><br><span class="line">   free     = 976976 (0.9317169189453125MB)</span><br><span class="line"></span><br><span class="line">   84.78829520089286% used</span><br><span class="line"></span><br><span class="line">From Space:</span><br><span class="line"></span><br><span class="line">   capacity = 131072 (0.125MB)</span><br><span class="line"></span><br><span class="line">   used     = 98304 (0.09375MB)</span><br><span class="line"></span><br><span class="line">   free     = 32768 (0.03125MB)</span><br><span class="line"></span><br><span class="line">   75.0% used</span><br><span class="line"></span><br><span class="line">To Space:</span><br><span class="line"></span><br><span class="line">   capacity = 131072 (0.125MB)</span><br><span class="line"></span><br><span class="line">   used     = 0 (0.0MB)</span><br><span class="line"></span><br><span class="line">   free     = 131072 (0.125MB)</span><br><span class="line"></span><br><span class="line">   0.0% used</span><br><span class="line"></span><br><span class="line">PS Old Generation</span><br><span class="line"></span><br><span class="line">   capacity = 35258368 (33.625MB)</span><br><span class="line"></span><br><span class="line">   used     = 4119544 (3.9287033081054688MB)</span><br><span class="line"></span><br><span class="line">   free     = 31138824 (29.69629669189453MB)</span><br><span class="line"></span><br><span class="line">   11.683876009235595% used</span><br><span class="line"></span><br><span class="line">PS Perm Generation</span><br><span class="line"></span><br><span class="line">   capacity = 52428800 (50.0MB)</span><br><span class="line"></span><br><span class="line">   used     = 26075168 (24.867218017578125MB)</span><br><span class="line"></span><br><span class="line">   free     = 26353632 (25.132781982421875MB)</span><br><span class="line"></span><br><span class="line">   49.73443603515625% used</span><br><span class="line"></span><br><span class="line">   ....</span><br></pre></td></tr></table></figure>
+
+<p>使用jmap -histo[:live] pid查看堆内存中的对象数目、大小统计直方图，如果带上live则只统计活对象，如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:/# jmap -histo:live 21711 | more</span><br><span class="line"></span><br><span class="line">num     #instances         #bytes  class name----------------------------------------------</span><br><span class="line"></span><br><span class="line">   1:         38445        5597736  &lt;constMethodKlass&gt;</span><br><span class="line"></span><br><span class="line">   2:         38445        5237288  &lt;methodKlass&gt;</span><br><span class="line"></span><br><span class="line">   3:          3500        3749504  &lt;constantPoolKlass&gt;</span><br><span class="line"></span><br><span class="line">   4:         60858        3242600  &lt;symbolKlass&gt;</span><br><span class="line"></span><br><span class="line">   5:          3500        2715264  &lt;instanceKlassKlass&gt;</span><br><span class="line"></span><br><span class="line">   6:          2796        2131424  &lt;constantPoolCacheKlass&gt;</span><br><span class="line"></span><br><span class="line">   7:          5543        1317400  [I</span><br><span class="line"></span><br><span class="line">   8:         13714        1010768  [C</span><br><span class="line"></span><br><span class="line">   9:          4752        1003344  [B</span><br><span class="line"></span><br><span class="line">  10:          1225         639656  &lt;methodDataKlass&gt;</span><br><span class="line"></span><br><span class="line">  11:         14194         454208  java.lang.String</span><br><span class="line"></span><br><span class="line">  12:          3809         396136  java.lang.Class</span><br><span class="line"></span><br><span class="line">  13:          4979         311952  [S</span><br><span class="line"></span><br><span class="line">  14:          5598         287064  [[I</span><br><span class="line"></span><br><span class="line">  15:          3028         266464  java.lang.reflect.Method</span><br><span class="line"></span><br><span class="line">  16:           280         163520  &lt;objArrayKlassKlass&gt;</span><br><span class="line"></span><br><span class="line">  17:          4355         139360  java.util.HashMap$Entry</span><br><span class="line"></span><br><span class="line">  18:          1869         138568  [Ljava.util.HashMap$Entry;</span><br><span class="line"></span><br><span class="line">  19:          2443          97720  java.util.LinkedHashMap$Entry</span><br><span class="line"></span><br><span class="line">  20:          2072          82880  java.lang.ref.SoftReference</span><br><span class="line"></span><br><span class="line">  21:          1807          71528  [Ljava.lang.Object;</span><br><span class="line"></span><br><span class="line">  22:          2206          70592  java.lang.ref.WeakReference</span><br><span class="line"></span><br><span class="line">  23:           934          52304  java.util.LinkedHashMap</span><br><span class="line"></span><br><span class="line">  24:           871          48776  java.beans.MethodDescriptor</span><br><span class="line"></span><br><span class="line">  25:          1442          46144  java.util.concurrent.ConcurrentHashMap$HashEntry</span><br><span class="line"></span><br><span class="line">  26:           804          38592  java.util.HashMap</span><br><span class="line"></span><br><span class="line">  27:           948          37920  java.util.concurrent.ConcurrentHashMap$Segment</span><br><span class="line"></span><br><span class="line">  28:          1621          35696  [Ljava.lang.Class;</span><br><span class="line"></span><br><span class="line">  29:          1313          34880  [Ljava.lang.String;</span><br><span class="line"></span><br><span class="line">  30:          1396          33504  java.util.LinkedList$Entry</span><br><span class="line"></span><br><span class="line">  31:           462          33264  java.lang.reflect.Field</span><br><span class="line"></span><br><span class="line">  32:          1024          32768  java.util.Hashtable$Entry</span><br><span class="line"></span><br><span class="line">  33:           948          31440  [Ljava.util.concurrent.ConcurrentHashMap$HashEntry;</span><br></pre></td></tr></table></figure>
+
+<p>class name是对象类型，说明如下：</p>
+<p>B  byte</p>
+<p>C  char</p>
+<p>D  double</p>
+<p>F  float</p>
+<p>I  int</p>
+<p>J  long</p>
+<p>Z  boolean</p>
+<p>[  数组，如[I表示int[]</p>
+<p>[L+类名 其他对象</p>
+<p>还有一个很常用的情况是：用jmap把进程内存使用情况dump到文件中，再用jhat分析查看。jmap进行dump命令格式如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmap -dump:format=b,file=dumpFileName pid</span><br></pre></td></tr></table></figure>
+
+<p>上面进程ID为21711进行Dump：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:/# jmap -dump:format=b,file=/tmp/dump.dat 21711     </span><br><span class="line"></span><br><span class="line">Dumping heap to /tmp/dump.dat ...</span><br><span class="line"></span><br><span class="line">Heap dump file created</span><br></pre></td></tr></table></figure>
+
+<p>dump出来的文件可以用MAT、VisualVM等工具查看，这里用jhat查看：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:/# jhat -port 9998 /tmp/dump.dat</span><br><span class="line"></span><br><span class="line">Reading from /tmp/dump.dat...</span><br><span class="line"></span><br><span class="line">Dump file created Tue Jan 28 17:46:14 CST 2014Snapshot read, resolving...</span><br><span class="line"></span><br><span class="line">Resolving 132207 objects...</span><br><span class="line"></span><br><span class="line">Chasing references, expect 26 dots..........................</span><br><span class="line"></span><br><span class="line">Eliminating duplicate references..........................</span><br><span class="line"></span><br><span class="line">Snapshot resolved.</span><br><span class="line"></span><br><span class="line">Started HTTP server on port 9998Server is ready.</span><br></pre></td></tr></table></figure>
+<p>注意如果Dump文件太大，可能需要加上-J-Xmx512m这种参数指定最大堆内存，即jhat -J-Xmx512m -port 9998 /tmp/dump.dat。然后就可以在浏览器中输入主机地址:9998查看了</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Lucuicheng
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lucuicheng.github.io/2020/03/23/JVM%E6%8E%92%E6%9F%A5%E6%AD%A5%E9%AA%A4/" title="JVM排查步骤">http://lucuicheng.github.io/2020/03/23/JVM排查步骤/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jvm/" rel="tag"># jvm</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/03/23/LinuxCmd/" rel="prev" title="linux常用命令">
+      <i class="fa fa-chevron-left"></i> linux常用命令
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/05/20/ssh-sftp/" rel="next" title="ssh 配置文件开启 sftp">
+      ssh 配置文件开启 sftp <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一-、使用jps获取java应用进程号"><span class="nav-number">1.</span> <span class="nav-text">一 、使用jps获取java应用进程号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二-、通过进程号，找出该进程内最耗费CPU的线程"><span class="nav-number">2.</span> <span class="nav-text">二 、通过进程号，找出该进程内最耗费CPU的线程,</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三-、使用jstack查询消耗内存定位值代码层面。"><span class="nav-number">3.</span> <span class="nav-text">三 、使用jstack查询消耗内存定位值代码层面。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四-、jstat（JVM统计监测工具）监控FullGC情况，获取系统FullGC的频率。"><span class="nav-number">4.</span> <span class="nav-text">四 、jstat（JVM统计监测工具）监控FullGC情况，获取系统FullGC的频率。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#五、-jmap（Memory-Map）和jhat（Java-Heap-Analysis-Tool）"><span class="nav-number">5.</span> <span class="nav-text">五、 jmap（Memory Map）和jhat（Java Heap Analysis Tool）</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Lucuicheng</p>
+  <div class="site-description" itemprop="description">记录日常使用的一些内容</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lucuicheng</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">26k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">23 分钟</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

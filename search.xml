@@ -1,0 +1,668 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>图片无法加载（&#39;github raw 文件无法访问）&#39;</title>
+    <url>/2017/01/12/github_raw/</url>
+    <content><![CDATA[<h3 id="域名被DNS污染"><a href="#域名被DNS污染" class="headerlink" title="域名被DNS污染"></a>域名被DNS污染</h3><pre><code>修改 host 文件</code></pre><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">199.232.4.133 raw.githubusercontent.com</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/lucuicheng/pic/raw/master/blog/%E6%89%B9%E6%B3%A8%202020-08-24%20104030.png" alt="avatar"></p>
+]]></content>
+      <tags>
+        <tag>github</tag>
+        <tag>raw</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>axure</title>
+    <url>/2022/03/09/axure/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>kong 网关基础内容</title>
+    <url>/2020/09/23/kong/</url>
+    <content><![CDATA[<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 最新安装包位置</span></span><br><span class="line">https://kong.bintray.com/kong-community-edition-rpm/centos/7/</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">yum install -y https://kong.bintray.com/kong-community-edition-rpm/centos/7/kong-community-edition-1.1.2.el7.noarch.rpm</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 前王该地址获取最新包</span></span><br><span class="line">https://yum.postgresql.org/repopackages/</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">yum install postgresql13-contrib postgresql13-server -y</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 安装</span></span><br><span class="line">/usr/pgsql-13/bin/postgresql-13-setup initdb</span><br><span class="line">vim /var/lib/pgsql/13/data/postgresql.conf</span><br><span class="line">vim /var/lib/pgsql/13/data/pg_hba.conf</span><br><span class="line"><span class="meta">#</span><span class="bash"> 修改 listen_addresses</span></span><br><span class="line">sed -i  /^listen_addresses/c\listen_addresses=\'*\' /var/lib/pgsql/13/data postgresql.conf</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> pg 查询用户</span></span><br><span class="line">select rolname,rolpassword from pg_authid;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">su - postgres &lt;&lt; EOF</span><br><span class="line"></span><br><span class="line">psql &lt;&lt; XOF</span><br><span class="line"></span><br><span class="line">CREATE USER kong;</span><br><span class="line">CREATE DATABASE kong OWNER kong;</span><br><span class="line">ALTER USER kong PASSWORD 'Kong@123';</span><br><span class="line"></span><br><span class="line">XOF</span><br><span class="line"></span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 修改pg密码</span></span><br><span class="line">\password role</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> kong docker 安装地址</span></span><br><span class="line">https://docs.konghq.com/install/docker/</span><br><span class="line"><span class="meta">#</span><span class="bash"> 配置修改</span></span><br><span class="line">vim /etc/kong/kong.conf</span><br><span class="line"></span><br><span class="line">kong</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">docker run -d --name kong \</span><br><span class="line">     --network=kong-net \</span><br><span class="line">     -e "KONG_DATABASE=postgres" \</span><br><span class="line">     -e "KONG_PG_HOST=kong-database" \</span><br><span class="line">     -e "KONG_PG_USER=kong" \</span><br><span class="line">     -e "KONG_PG_PASSWORD=kong" \</span><br><span class="line">     -e "KONG_CASSANDRA_CONTACT_POINTS=kong-database" \</span><br><span class="line">     -e "KONG_PROXY_ACCESS_LOG=/dev/stdout" \</span><br><span class="line">     -e "KONG_ADMIN_ACCESS_LOG=/dev/stdout" \</span><br><span class="line">     -e "KONG_PROXY_ERROR_LOG=/dev/stderr" \</span><br><span class="line">     -e "KONG_ADMIN_ERROR_LOG=/dev/stderr" \</span><br><span class="line">     -e "KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl" \</span><br><span class="line">     -p 8000:8000 \</span><br><span class="line">     -p 8443:8443 \</span><br><span class="line">     -p 10.0.0.22:8001:8001 \</span><br><span class="line">     -p 10.0.0.22:8444:8444 \</span><br><span class="line">     kong:latest</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">curl -i -X POST \</span><br><span class="line">  --url http://10.0.0.22:8001/services/ \</span><br><span class="line">  --data 'name=actifio-service' \</span><br><span class="line">  --data 'url=https://10.0.0.6'</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">curl -i -X POST \</span><br><span class="line">  --url http://10.0.0.22:8001/services/actifio-service/routes \</span><br><span class="line">  --data 'hosts[]=activeio.com.cn'</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">curl -i -X GET \</span><br><span class="line">  --url http://10.0.0.22:8000/ \</span><br><span class="line">  --header 'Host: activeio.com.cn'</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>kong</tag>
+        <tag>api</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>还原修复yum环境</title>
+    <url>/2020/07/18/yum_r/</url>
+    <content><![CDATA[<h3 id="下载如下安装包到本地目录"><a href="#下载如下安装包到本地目录" class="headerlink" title="下载如下安装包到本地目录"></a>下载如下安装包到本地目录</h3><pre><code>http://mirrors.163.com/centos/7/os/x86_64/Packages/python-2.7.5-88.el7.x86_64.rpm 
+http://mirrors.163.com/centos/7/os/x86_64/Packages/python-chardet-2.2.1-3.el7.noarch.rpm
+http://mirrors.163.com/centos/7/os/x86_64/Packages/python-devel-2.7.5-88.el7.x86_64.rpm
+http://mirrors.163.com/centos/7/os/x86_64/Packages/python-iniparse-0.4-9.el7.noarch.rpm
+http://mirrors.163.com/centos/7/os/x86_64/Packages/python-kitchen-1.1.1-5.el7.noarch.rpm
+http://mirrors.163.com/centos/7/os/x86_64/Packages/python-libs-2.7.5-88.el7.x86_64.rpm
+http://mirrors.163.com/centos/7/os/x86_64/Packages/python-pycurl-7.19.0-19.el7.x86_64.rpm
+http://mirrors.163.com/centos/7/os/x86_64/Packages/python-setuptools-0.9.8-7.el7.noarch.rpm
+http://mirrors.163.com/centos/7/os/x86_64/Packages/python-urlgrabber-3.10-10.el7.noarch.rpm
+
+http://mirrors.163.com/centos/7/os/x86_64/Packages/rpm-python-4.11.3-43.el7.x86_64.rpm
+http://mirrors.163.com/centos/7/os/x86_64/Packages/yum-3.4.3-167.el7.centos.noarch.rpm
+http://mirrors.163.com/centos/7/os/x86_64/Packages/yum-metadata-parser-1.1.4-10.el7.x86_64.rpm
+http://mirrors.163.com/centos/7/os/x86_64/Packages/yum-plugin-aliases-1.1.31-53.el7.noarch.rpm
+http://mirrors.163.com/centos/7/os/x86_64/Packages/yum-plugin-fastestmirror-1.1.31-53.el7.noarch.rpm
+http://mirrors.163.com/centos/7/os/x86_64/Packages/yum-plugin-protectbase-1.1.31-53.el7.noarch.rpm 
+http://mirrors.163.com/centos/7/os/x86_64/Packages/yum-updateonboot-1.1.31-53.el7.noarch.rpm
+http://mirrors.163.com/centos/7/os/x86_64/Packages/yum-utils-1.1.31-53.el7.noarch.rpm</code></pre><h3 id="本地目录安装"><a href="#本地目录安装" class="headerlink" title="本地目录安装"></a>本地目录安装</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">rpm -ivh --force *.rpm --nodeps</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>python</tag>
+        <tag>linux</tag>
+        <tag>yum</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>centos7 python3 虚拟环境安装</title>
+    <url>/2020/07/15/python_env/</url>
+    <content><![CDATA[<h3 id="准备依赖"><a href="#准备依赖" class="headerlink" title="准备依赖"></a>准备依赖</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">pip install virtualenv</span><br><span class="line"></span><br><span class="line">pip install virtualenvwrapper</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置-bashrc"><a href="#配置-bashrc" class="headerlink" title="配置 bashrc"></a>配置 bashrc</h3><h4 id="增加如下配置"><a href="#增加如下配置" class="headerlink" title="增加如下配置"></a>增加如下配置</h4><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">export WORKON_HOME=~/.environments</span><br><span class="line">export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3</span><br><span class="line">export VIRTUALENVWRAPPER_VIRTUALENV=/root/.local/bin/virtualenv</span><br><span class="line">source /root/.local/bin/virtualenvwrapper.sh</span><br></pre></td></tr></table></figure>
+<h4 id="启用配置"><a href="#启用配置" class="headerlink" title="启用配置"></a>启用配置</h4><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">source ~/.bashrc</span><br></pre></td></tr></table></figure>
+<h3 id="虚拟环境"><a href="#虚拟环境" class="headerlink" title="虚拟环境"></a>虚拟环境</h3><h4 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h4><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">mkvirtualenv -p python3 py3_flask</span><br></pre></td></tr></table></figure>
+<h4 id="查看"><a href="#查看" class="headerlink" title="查看"></a>查看</h4><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">workon</span><br></pre></td></tr></table></figure>
+<h4 id="切换"><a href="#切换" class="headerlink" title="切换"></a>切换</h4><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">workon py3_flask</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>python</tag>
+        <tag>linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>centos7 python3 源码安装</title>
+    <url>/2020/07/15/python_install/</url>
+    <content><![CDATA[<h3 id="备注"><a href="#备注" class="headerlink" title="备注"></a>备注</h3><pre><code>centos 环境下 不建议完全直接删除原有自带的python, 可能会造成 yum 等无法使用
+如果想要完全卸载自带python，请使用以下命令：</code></pre><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 卸载</span></span><br><span class="line">rpm -qa|grep python|xargs rpm -ev --allmatches --nodeps</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 删除残余文件</span></span><br><span class="line">whereis python |xargs rm -frv</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 验证删除</span></span><br><span class="line">whereis python</span><br></pre></td></tr></table></figure>
+
+<h3 id="准备依赖"><a href="#准备依赖" class="headerlink" title="准备依赖"></a>准备依赖</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">yum install wget openssl-devel bzip2-devel expat-devel gdbm-devel readline-devel sqlite-devel python3-devel</span><br></pre></td></tr></table></figure>
+<h3 id="指定源码包存放位置，以下都在该位置进行"><a href="#指定源码包存放位置，以下都在该位置进行" class="headerlink" title="指定源码包存放位置，以下都在该位置进行"></a>指定源码包存放位置，以下都在该位置进行</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">cd $&#123;SOME_PATH&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="获取源码包"><a href="#获取源码包" class="headerlink" title="获取源码包"></a>获取源码包</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> www.python.org/ftp/python</span></span><br><span class="line">wget https://www.python.org/ftp/python/3.8.4/Python-3.8.4.tgz</span><br><span class="line">tar zxvf Python-3.8.4.tgz</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置并安装"><a href="#配置并安装" class="headerlink" title="配置并安装"></a>配置并安装</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">cd Python-3.8.4</span><br><span class="line"></span><br><span class="line">./configure --with-ssl --enable-optimizations --prefix=/usr/local/python3</span><br><span class="line"></span><br><span class="line">make &amp;&amp; make install</span><br><span class="line"></span><br><span class="line">ln -s /usr/local/python/bin/python3 /usr/bin/python3</span><br><span class="line"></span><br><span class="line">ln -s /usr/local/python/bin/pip3 /usr/bin/pip3</span><br></pre></td></tr></table></figure>
+
+<h3 id="检查安装"><a href="#检查安装" class="headerlink" title="检查安装"></a>检查安装</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">python -V</span><br></pre></td></tr></table></figure>
+
+
+]]></content>
+      <tags>
+        <tag>python</tag>
+        <tag>linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ambx-server 安装配置</title>
+    <url>/2020/06/29/flask/</url>
+    <content><![CDATA[<h1 id="ambx-server"><a href="#ambx-server" class="headerlink" title="ambx-server"></a>ambx-server</h1><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git clone http://gitlab.retlines.com/actifio/ambx-server.git</span><br></pre></td></tr></table></figure>
+
+<h3 id="install"><a href="#install" class="headerlink" title="install"></a>install</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">mkvirtualenv -p python3 py3_flask</span><br><span class="line"></span><br><span class="line">pip3 install -r requirements.txt</span><br></pre></td></tr></table></figure>
+
+<h3 id="start-project"><a href="#start-project" class="headerlink" title="start project"></a>start project</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">python3 run.oy</span><br><span class="line"></span><br><span class="line">curl http://127.0.0.1:5000/</span><br></pre></td></tr></table></figure>
+
+<h3 id="api-doc"><a href="#api-doc" class="headerlink" title="api doc"></a>api doc</h3><h4 id="generate"><a href="#generate" class="headerlink" title="generate"></a>generate</h4><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">cd doc</span><br><span class="line">sphinx-quickstart</span><br><span class="line">sphinx-apidoc -o source ../src</span><br><span class="line">make clean</span><br><span class="line">make html</span><br></pre></td></tr></table></figure>
+
+<h4 id="config"><a href="#config" class="headerlink" title="config"></a>config</h4><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> doc/<span class="built_in">source</span>/conf.py</span></span><br><span class="line">import os</span><br><span class="line">import sys</span><br><span class="line">sys.path.insert(0, os.path.abspath('../../src/..'))#指向resources目录</span><br><span class="line"></span><br><span class="line">language = 'zh_CN'</span><br><span class="line"></span><br><span class="line">extensions = ['sphinx.ext.autodoc',</span><br><span class="line">    'sphinx.ext.doctest',</span><br><span class="line">    'sphinx.ext.intersphinx',</span><br><span class="line">    'sphinx.ext.todo',</span><br><span class="line">    'sphinx.ext.coverage',</span><br><span class="line">    'sphinx.ext.mathjax']</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>python</tag>
+        <tag>linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>k8s 本地测试环境搭建</title>
+    <url>/2020/06/13/k8s/</url>
+    <content><![CDATA[<h3 id="安装king"><a href="#安装king" class="headerlink" title="安装king"></a>安装king</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.8.1/kind-$(uname)-amd64</span><br><span class="line">chmod +x ./kind</span><br><span class="line">mv ./kind /some-dir-in-your-PATH/kind</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span></span><br><span class="line">kind create cluster --name kind-2</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> </span></span><br><span class="line">kubectl cluster-info --context kind-kind-2</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装kuebctl"><a href="#安装kuebctl" class="headerlink" title="安装kuebctl"></a>安装kuebctl</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.0/bin/linux/amd64/kubectl</span><br><span class="line">chmod +x ./kubectl</span><br><span class="line">sudo mv ./kubectl /usr/local/bin/kubectl</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装-dashboard"><a href="#安装-dashboard" class="headerlink" title="安装 dashboard"></a>安装 dashboard</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '&#123;print $1&#125;')</span><br></pre></td></tr></table></figure>
+
+<h3 id=""><a href="#" class="headerlink" title=""></a></h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span></span><br><span class="line">kubectl apply -f yaml/registry.yaml</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">kubectl apply -f yaml/deployment-nginx.yaml</span><br><span class="line">kubectl apply -f yaml/service-nginx.yaml</span><br><span class="line">kubectl expose deployment nginx-deployment --type=NodePort</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">kubectl describe node kind</span><br><span class="line"></span><br><span class="line">kubectl get deployment -o wide</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">cat &lt;&lt;EOF | kind create cluster --config=-</span><br><span class="line">kind: Cluster</span><br><span class="line">apiVersion: kind.x-k8s.io/v1alpha4</span><br><span class="line">networking:</span><br><span class="line">- kubeProxyMode: ipvs</span><br><span class="line">nodes:</span><br><span class="line">- role: control-plane</span><br><span class="line">  kubeadmConfigPatches:</span><br><span class="line">  - |</span><br><span class="line">    kind: InitConfiguration</span><br><span class="line">    nodeRegistration:</span><br><span class="line">      kubeletExtraArgs:</span><br><span class="line">        node-labels: "ingress-ready=true"</span><br><span class="line">  extraPortMappings:</span><br><span class="line">  - containerPort: 80</span><br><span class="line">    hostPort: 80</span><br><span class="line">    protocol: TCP</span><br><span class="line">  - containerPort: 443</span><br><span class="line">    hostPort: 443</span><br><span class="line">    protocol: TCP</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>docker</tag>
+        <tag>wsl2</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>证书相关</title>
+    <url>/2020/06/01/cert/</url>
+    <content><![CDATA[<h3 id="常用证书文件格式说明"><a href="#常用证书文件格式说明" class="headerlink" title="常用证书文件格式说明"></a>常用证书文件格式说明</h3><pre><code>常见公钥后缀：pem crt key
+常见私钥后缀：pfx p12 pem key</code></pre><h3 id="PKCS"><a href="#PKCS" class="headerlink" title="PKCS"></a>PKCS</h3><pre><code>全称是 Public-Key Cryptography Standards 
+是由 RSA 实验室与其它安全系统开发商为促进公钥密码的发展而制订的一系列标准，PKCS 目前共发布过 15 个标准。 
+
+常用的有：
+
+PKCS#7
+    也叫做加密消息的语法标准，由RSA安全体系在公钥加密系统中交换数字证书产生的一种加密标准。
+    常用的后缀是： .P7B .P7C .SPC
+    .p7r: CA对证书请求的回复，只用于导入
+    .p7b: 以树状展示证书链(certificate chain)，同时也支持单个证书，不含私钥。
+
+PKCS#10
+    描述证书请求语法
+    常用的后缀有： .P10
+
+PKCS#12
+   描述个人信息交换语法标准。描述了将用户公钥、私钥、证书和其他相关信息打包的语法，2进制方式
+   常用的后缀有： .P12 .PFX</code></pre><h3 id="X-509"><a href="#X-509" class="headerlink" title="X.509"></a>X.509</h3><pre><code>是常见通用的证书格式。所有的证书都符合为Public Key Infrastructure (PKI) 制定的 ITU-T X509 国际标准。
+
+X.509 DER 编码(ASCII)的后缀是： .DER .CER .CRT
+X.509 PAM 编码(Base64)的后缀是： .PEM .CER .CRT
+
+.cer/.crt: 用于存放证书，它是2进制形式存放的，不含私钥。
+.pem: 跟crt/cer的区别是它以Ascii来表示。</code></pre>]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>cert</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>cloc 统计文件数 排除指定目录</title>
+    <url>/2020/05/26/cloc/</url>
+    <content><![CDATA[<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> [统计文件数的路径] 必须包含  [要排除的路径]</span></span><br><span class="line">cloc --fullpath --not-match-d 要排除的路径  统计文件数的路径</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>cloc</tag>
+        <tag>统计</tag>
+        <tag>工具</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>windows10 wsl 出现 Exit code 4294967295</title>
+    <url>/2020/05/25/wsl/</url>
+    <content><![CDATA[<h3 id="53-端口被占用"><a href="#53-端口被占用" class="headerlink" title="53 端口被占用"></a>53 端口被占用</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 检查是否有vpn工具（easy connect, any connect 等）,自动开启并占用了53 端口</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <tags>
+        <tag>Windows10</tag>
+        <tag>WSL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ssh 配置文件开启 sftp</title>
+    <url>/2020/05/20/ssh-sftp/</url>
+    <content><![CDATA[<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> /etc/ssh/sshd_config, 修改配置文件</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 保持该配置注释</span></span><br><span class="line"><span class="meta">#</span><span class="bash">Subsystem   sftp   /usr/libexec/openssh/sftp-server</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 添加如下</span></span><br><span class="line">Subsystem   sftp    internal-sftp</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>ssh</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>JVM排查步骤</title>
+    <url>/2020/03/23/JVM%E6%8E%92%E6%9F%A5%E6%AD%A5%E9%AA%A4/</url>
+    <content><![CDATA[<h3 id="一-、使用jps获取java应用进程号"><a href="#一-、使用jps获取java应用进程号" class="headerlink" title="一 、使用jps获取java应用进程号"></a>一 、使用jps获取java应用进程号</h3><p>(Java Virtual Machine Process Status Tool)<br>jps主要用来输出JVM中运行的进程状态信息。语法格式如下：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">jps    [options]      [hostid]</span><br><span class="line"></span><br><span class="line">    如果不指定hostid就默认为当前主机或服务器。</span><br><span class="line"></span><br><span class="line">    命令行参数选项说明如下：</span><br><span class="line">    </span><br><span class="line">-q # 不输出类名、Jar名和传入main方法的参数</span><br><span class="line"></span><br><span class="line">-m # 输出传入main方法的参数</span><br><span class="line"></span><br><span class="line">-l # 输出main类或Jar的全限名</span><br><span class="line"></span><br><span class="line">-v # 输出传入JVM的参数</span><br></pre></td></tr></table></figure>
+
+<h3 id="二-、通过进程号，找出该进程内最耗费CPU的线程"><a href="#二-、通过进程号，找出该进程内最耗费CPU的线程" class="headerlink" title="二 、通过进程号，找出该进程内最耗费CPU的线程,"></a>二 、通过进程号，找出该进程内最耗费CPU的线程,</h3><p>top -Hp pid (常用推荐) 获取线程ID，跟进内存消耗进行选择线程ID号 得到 21742</p>
+<p>IME列就是各个Java线程耗费的CPU时间，CPU时间最长的是线程ID为21742的线程</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">printf "%x\n" 21742</span><br></pre></td></tr></table></figure>
+
+<p>得到21742的十六进制值为54ee，下面会用到。 </p>
+<p>使用printf “%x\n” 线程ID 转换为16进制值 或者手工计算线程ID转换为16进制值</p>
+<p>也可以使用glances 或者其他内存可视化工具，直接进行分析</p>
+<a id="more"></a>
+
+<h3 id="三-、使用jstack查询消耗内存定位值代码层面。"><a href="#三-、使用jstack查询消耗内存定位值代码层面。" class="headerlink" title="三 、使用jstack查询消耗内存定位值代码层面。"></a>三 、使用jstack查询消耗内存定位值代码层面。</h3><p>语法格式为：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">jstack 进程号 |grep （转换后的16进制线程ID值) ,可定位至代码层面。</span><br></pre></td></tr></table></figure>
+<p>例子</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">root@ubuntu:/# jstack 21711 | grep 54ee</span><br><span class="line"></span><br><span class="line">"PollIntervalRetrySchedulerThread" prio=10 tid=0x00007f950043e000 nid=0x54ee in Object.wait() [0x00007f94c6eda000]</span><br></pre></td></tr></table></figure>
+
+<p>可以看到CPU消耗在PollIntervalRetrySchedulerThread这个类的Object.wait()</p>
+<p>jstack主要用来查看某个Java进程内的线程堆栈信息。语法格式如下： </p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">jstack [option] pid</span><br><span class="line"></span><br><span class="line">jstack [option] executable core</span><br><span class="line"></span><br><span class="line">jstack [option] [server-id@]remote-hostname-or-ip</span><br></pre></td></tr></table></figure>
+
+<p>命令行参数选项说明如下</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">-l pid # 来观察锁持有情况</span><br><span class="line">-l long listings # 会打印出额外的锁信息，在发生死锁时可以用</span><br><span class="line">-m mixed mode # 不仅会输出Java堆栈信息，还会输出C/C++堆栈信息（比如Native方法）</span><br></pre></td></tr></table></figure>
+<p>jstack可以定位到线程堆栈，根据堆栈信息我们可以定位到具体代码，所以它在JVM性能调优中使用得非常多。下面我们来一个实例找出某个Java进程中最耗费CPU的Java线程并定位堆栈信息，用到的命令有ps、top、printf、jstack、grep。</p>
+<h3 id="四-、jstat（JVM统计监测工具）监控FullGC情况，获取系统FullGC的频率。"><a href="#四-、jstat（JVM统计监测工具）监控FullGC情况，获取系统FullGC的频率。" class="headerlink" title="四 、jstat（JVM统计监测工具）监控FullGC情况，获取系统FullGC的频率。"></a>四 、jstat（JVM统计监测工具）监控FullGC情况，获取系统FullGC的频率。</h3><p>语法格式如下：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">jstat [ generalOption | outputOptions vmid [interval[s|ms] [count]] ]</span><br></pre></td></tr></table></figure>
+
+<p>例子：vmid是Java虚拟机ID，在Linux/Unix系统上一般就是进程ID。interval是采样时间间隔。count是采样数目。比如下面输出的是GC信息，采样时间间隔为250ms，采样数为4：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">root@ubuntu:/# jstat -gc 21711 250 4</span><br><span class="line"></span><br><span class="line">S0C    S1C    S0U    S1U      EC       EU        OC         OU       PC     PU    YGC     YGCT    FGC    FGCT     GCT   </span><br><span class="line"></span><br><span class="line">192.0  192.0   64.0   0.0    6144.0   1854.9   32000.0     4111.6   55296.0 25472.7    702    0.431   3      0.218    0.649</span><br><span class="line"></span><br><span class="line">192.0  192.0   64.0   0.0    6144.0   1972.2   32000.0     4111.6   55296.0 25472.7    702    0.431   3      0.218    0.649</span><br><span class="line"></span><br><span class="line">192.0  192.0   64.0   0.0    6144.0   1972.2   32000.0     4111.6   55296.0 25472.7    702    0.431   3      0.218    0.649</span><br><span class="line"></span><br><span class="line">192.0  192.0   64.0   0.0    6144.0   2109.7   32000.0     4111.6   55296.0 25472.7    702    0.431   3      0.218    0.649</span><br></pre></td></tr></table></figure>
+
+<p>要明白上面各列的意义，先看JVM堆内存布局：<br>可以看出：</p>
+<p>堆内存 = 年轻代 + 年老代 + 永久代<br>年轻代 = Eden区 + 两个Survivor区（From和To）</p>
+<p>现在来解释各列含义：</p>
+<p>S0C、S1C、S0U、S1U：Survivor 0/1区容量（Capacity）和使用量（Used）</p>
+<p>EC、EU：Eden区容量和使用量</p>
+<p>OC、OU：年老代容量和使用量</p>
+<p>PC、PU：永久代容量和使用量</p>
+<p>YGC、YGT：年轻代GC次数和GC耗时</p>
+<p>FGC、FGCT：Full GC次数和Full GC耗时</p>
+<p>GCT：GC总耗时</p>
+<h3 id="五、-jmap（Memory-Map）和jhat（Java-Heap-Analysis-Tool）"><a href="#五、-jmap（Memory-Map）和jhat（Java-Heap-Analysis-Tool）" class="headerlink" title="五、 jmap（Memory Map）和jhat（Java Heap Analysis Tool）"></a>五、 jmap（Memory Map）和jhat（Java Heap Analysis Tool）</h3><p>jmap用来查看堆内存使用状况，一般结合jhat使用。<br>jmap语法格式如下：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">jmap [option] pid</span><br><span class="line"></span><br><span class="line">jmap [option] executable core</span><br><span class="line"></span><br><span class="line">jmap [option] [server-id@]remote-hostname-or-ip</span><br></pre></td></tr></table></figure>
+
+<p>如果运行在64位JVM上，可能需要指定-J-d64命令选项参数。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">jmap -permstat pid</span><br></pre></td></tr></table></figure>
+<p>打印进程的类加载器和类加载器加载的持久代对象信息，输出：类加载器名称、对象是否存活（不可靠）、对象地址、父类加载器、已加载的类大小等信息：</p>
+<p>使用jmap -heap pid查看进程堆内存使用情况，包括使用的GC算法、堆配置参数和各代中堆内存使用情况。比例子：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">root@ubuntu:/# jmap -heap 21711</span><br><span class="line"></span><br><span class="line">Attaching to process ID 21711, please wait...</span><br><span class="line"></span><br><span class="line">Debugger attached successfully.</span><br><span class="line"></span><br><span class="line">Server compiler detected.</span><br><span class="line"></span><br><span class="line">JVM version is 20.10-b01</span><br><span class="line"></span><br><span class="line">using thread-local object allocation.</span><br><span class="line"></span><br><span class="line">Parallel GC with 4 thread(s)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Heap Configuration:</span><br><span class="line"></span><br><span class="line">MinHeapFreeRatio = 40   </span><br><span class="line"></span><br><span class="line">MaxHeapFreeRatio = 70   </span><br><span class="line"></span><br><span class="line">MaxHeapSize      = 2067791872 (1972.0MB)</span><br><span class="line"></span><br><span class="line">NewSize          = 1310720 (1.25MB)</span><br><span class="line"></span><br><span class="line">MaxNewSize       = 17592186044415 MB</span><br><span class="line"></span><br><span class="line">OldSize          = 5439488 (5.1875MB)</span><br><span class="line"></span><br><span class="line">NewRatio         = 2   </span><br><span class="line"></span><br><span class="line">SurvivorRatio    = 8   </span><br><span class="line"></span><br><span class="line">PermSize         = 21757952 (20.75MB)</span><br><span class="line"></span><br><span class="line">MaxPermSize      = 85983232 (82.0MB)</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">Heap Usage:</span><br><span class="line"></span><br><span class="line">PS Young Generation</span><br><span class="line"></span><br><span class="line">Eden Space:</span><br><span class="line"></span><br><span class="line">   capacity = 6422528 (6.125MB)</span><br><span class="line"></span><br><span class="line">   used     = 5445552 (5.1932830810546875MB)</span><br><span class="line"></span><br><span class="line">   free     = 976976 (0.9317169189453125MB)</span><br><span class="line"></span><br><span class="line">   84.78829520089286% used</span><br><span class="line"></span><br><span class="line">From Space:</span><br><span class="line"></span><br><span class="line">   capacity = 131072 (0.125MB)</span><br><span class="line"></span><br><span class="line">   used     = 98304 (0.09375MB)</span><br><span class="line"></span><br><span class="line">   free     = 32768 (0.03125MB)</span><br><span class="line"></span><br><span class="line">   75.0% used</span><br><span class="line"></span><br><span class="line">To Space:</span><br><span class="line"></span><br><span class="line">   capacity = 131072 (0.125MB)</span><br><span class="line"></span><br><span class="line">   used     = 0 (0.0MB)</span><br><span class="line"></span><br><span class="line">   free     = 131072 (0.125MB)</span><br><span class="line"></span><br><span class="line">   0.0% used</span><br><span class="line"></span><br><span class="line">PS Old Generation</span><br><span class="line"></span><br><span class="line">   capacity = 35258368 (33.625MB)</span><br><span class="line"></span><br><span class="line">   used     = 4119544 (3.9287033081054688MB)</span><br><span class="line"></span><br><span class="line">   free     = 31138824 (29.69629669189453MB)</span><br><span class="line"></span><br><span class="line">   11.683876009235595% used</span><br><span class="line"></span><br><span class="line">PS Perm Generation</span><br><span class="line"></span><br><span class="line">   capacity = 52428800 (50.0MB)</span><br><span class="line"></span><br><span class="line">   used     = 26075168 (24.867218017578125MB)</span><br><span class="line"></span><br><span class="line">   free     = 26353632 (25.132781982421875MB)</span><br><span class="line"></span><br><span class="line">   49.73443603515625% used</span><br><span class="line"></span><br><span class="line">   ....</span><br></pre></td></tr></table></figure>
+
+<p>使用jmap -histo[:live] pid查看堆内存中的对象数目、大小统计直方图，如果带上live则只统计活对象，如下：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">root@ubuntu:/# jmap -histo:live 21711 | more</span><br><span class="line"></span><br><span class="line">num     #instances         #bytes  class name----------------------------------------------</span><br><span class="line"></span><br><span class="line">   1:         38445        5597736  &lt;constMethodKlass&gt;</span><br><span class="line"></span><br><span class="line">   2:         38445        5237288  &lt;methodKlass&gt;</span><br><span class="line"></span><br><span class="line">   3:          3500        3749504  &lt;constantPoolKlass&gt;</span><br><span class="line"></span><br><span class="line">   4:         60858        3242600  &lt;symbolKlass&gt;</span><br><span class="line"></span><br><span class="line">   5:          3500        2715264  &lt;instanceKlassKlass&gt;</span><br><span class="line"></span><br><span class="line">   6:          2796        2131424  &lt;constantPoolCacheKlass&gt;</span><br><span class="line"></span><br><span class="line">   7:          5543        1317400  [I</span><br><span class="line"></span><br><span class="line">   8:         13714        1010768  [C</span><br><span class="line"></span><br><span class="line">   9:          4752        1003344  [B</span><br><span class="line"></span><br><span class="line">  10:          1225         639656  &lt;methodDataKlass&gt;</span><br><span class="line"></span><br><span class="line">  11:         14194         454208  java.lang.String</span><br><span class="line"></span><br><span class="line">  12:          3809         396136  java.lang.Class</span><br><span class="line"></span><br><span class="line">  13:          4979         311952  [S</span><br><span class="line"></span><br><span class="line">  14:          5598         287064  [[I</span><br><span class="line"></span><br><span class="line">  15:          3028         266464  java.lang.reflect.Method</span><br><span class="line"></span><br><span class="line">  16:           280         163520  &lt;objArrayKlassKlass&gt;</span><br><span class="line"></span><br><span class="line">  17:          4355         139360  java.util.HashMap$Entry</span><br><span class="line"></span><br><span class="line">  18:          1869         138568  [Ljava.util.HashMap$Entry;</span><br><span class="line"></span><br><span class="line">  19:          2443          97720  java.util.LinkedHashMap$Entry</span><br><span class="line"></span><br><span class="line">  20:          2072          82880  java.lang.ref.SoftReference</span><br><span class="line"></span><br><span class="line">  21:          1807          71528  [Ljava.lang.Object;</span><br><span class="line"></span><br><span class="line">  22:          2206          70592  java.lang.ref.WeakReference</span><br><span class="line"></span><br><span class="line">  23:           934          52304  java.util.LinkedHashMap</span><br><span class="line"></span><br><span class="line">  24:           871          48776  java.beans.MethodDescriptor</span><br><span class="line"></span><br><span class="line">  25:          1442          46144  java.util.concurrent.ConcurrentHashMap$HashEntry</span><br><span class="line"></span><br><span class="line">  26:           804          38592  java.util.HashMap</span><br><span class="line"></span><br><span class="line">  27:           948          37920  java.util.concurrent.ConcurrentHashMap$Segment</span><br><span class="line"></span><br><span class="line">  28:          1621          35696  [Ljava.lang.Class;</span><br><span class="line"></span><br><span class="line">  29:          1313          34880  [Ljava.lang.String;</span><br><span class="line"></span><br><span class="line">  30:          1396          33504  java.util.LinkedList$Entry</span><br><span class="line"></span><br><span class="line">  31:           462          33264  java.lang.reflect.Field</span><br><span class="line"></span><br><span class="line">  32:          1024          32768  java.util.Hashtable$Entry</span><br><span class="line"></span><br><span class="line">  33:           948          31440  [Ljava.util.concurrent.ConcurrentHashMap$HashEntry;</span><br></pre></td></tr></table></figure>
+
+<p>class name是对象类型，说明如下：</p>
+<p>B  byte</p>
+<p>C  char</p>
+<p>D  double</p>
+<p>F  float</p>
+<p>I  int</p>
+<p>J  long</p>
+<p>Z  boolean</p>
+<p>[  数组，如[I表示int[]</p>
+<p>[L+类名 其他对象</p>
+<p>还有一个很常用的情况是：用jmap把进程内存使用情况dump到文件中，再用jhat分析查看。jmap进行dump命令格式如下：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">jmap -dump:format=b,file=dumpFileName pid</span><br></pre></td></tr></table></figure>
+
+<p>上面进程ID为21711进行Dump：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">root@ubuntu:/# jmap -dump:format=b,file=/tmp/dump.dat 21711     </span><br><span class="line"></span><br><span class="line">Dumping heap to /tmp/dump.dat ...</span><br><span class="line"></span><br><span class="line">Heap dump file created</span><br></pre></td></tr></table></figure>
+
+<p>dump出来的文件可以用MAT、VisualVM等工具查看，这里用jhat查看：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">root@ubuntu:/# jhat -port 9998 /tmp/dump.dat</span><br><span class="line"></span><br><span class="line">Reading from /tmp/dump.dat...</span><br><span class="line"></span><br><span class="line">Dump file created Tue Jan 28 17:46:14 CST 2014Snapshot read, resolving...</span><br><span class="line"></span><br><span class="line">Resolving 132207 objects...</span><br><span class="line"></span><br><span class="line">Chasing references, expect 26 dots..........................</span><br><span class="line"></span><br><span class="line">Eliminating duplicate references..........................</span><br><span class="line"></span><br><span class="line">Snapshot resolved.</span><br><span class="line"></span><br><span class="line">Started HTTP server on port 9998Server is ready.</span><br></pre></td></tr></table></figure>
+<p>注意如果Dump文件太大，可能需要加上-J-Xmx512m这种参数指定最大堆内存，即jhat -J-Xmx512m -port 9998 /tmp/dump.dat。然后就可以在浏览器中输入主机地址:9998查看了</p>
+]]></content>
+      <tags>
+        <tag>jvm</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>linux常用命令</title>
+    <url>/2020/03/23/LinuxCmd/</url>
+    <content><![CDATA[<h3 id="查看使用容量"><a href="#查看使用容量" class="headerlink" title="查看使用容量"></a>查看使用容量</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">查看当前目录总共占的容量。而不单独列出各子项占用的容量 </span></span><br><span class="line">du -sh </span><br><span class="line"><span class="meta">#</span><span class="bash">查看当前目录下一级子文件和子目录占用的磁盘容量</span></span><br><span class="line">du -lh --max-depth=1</span><br><span class="line"><span class="meta">#</span><span class="bash">统计当前文件夹(目录)大小，并按文件大小排序</span></span><br><span class="line">du -sh * | sort -nr </span><br><span class="line"><span class="meta">#</span><span class="bash">查看指定文件大小</span></span><br><span class="line">du -sk filename</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">find -maxdepth 1 -name "sellerbar-web-root-*.tar.gz" | xargs -i tar zxvf &#123;&#125;*</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">**/sellerbar-web-root-*.tar.gz</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /opt/webapps</span><br><span class="line">find -maxdepth 1 -name "sellerbar-web-root-*.tar.gz" | xargs -i tar zxvf &#123;&#125;</span><br><span class="line">cd sellerbar-web-root-*</span><br><span class="line">cd bin</span><br><span class="line">./install.sh</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 清理yum缓存使用yum clean 命令， 清理/var/cahche</span></span><br><span class="line">yum clean headers  #清理/var/cache/yum的headers</span><br><span class="line">yum clean packages #清理/var/cache/yum下的软件包</span><br><span class="line">yum clean metadata</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<h3 id="设置git代理"><a href="#设置git代理" class="headerlink" title="设置git代理"></a>设置git代理</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git config --global http.proxy http://account:password@domian:port</span><br></pre></td></tr></table></figure>
+
+<h3 id="手动启动ss服务"><a href="#手动启动ss服务" class="headerlink" title="手动启动ss服务"></a>手动启动ss服务</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ssserver -p 8281 -k password -m rc4-md5 -d start</span><br></pre></td></tr></table></figure>
+
+<p>pwd 显示当前路径</p>
+<p>find 查找绝对路径</p>
+<h3 id="在线安装mysql"><a href="#在线安装mysql" class="headerlink" title="在线安装mysql"></a>在线安装mysql</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">view http://repo.mysql.com</span><br><span class="line">select **community-release-e**的 repo</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /opt</span><br><span class="line">wget http://repo.mysql.com/mysql57-community-release-el7.rpm</span><br><span class="line">sudo rpm -Uvh mysql57-community-release-el7.rpm</span><br><span class="line">sudo yum install mysql -y</span><br><span class="line">grep 'temporary password' /var/log/mysqld.log</span><br></pre></td></tr></table></figure>
+
+<h3 id="在线安装nginx"><a href="#在线安装nginx" class="headerlink" title="在线安装nginx"></a>在线安装nginx</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim /etc/yum.repos.d/nginx.repo</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[nginx]</span><br><span class="line">name=nginx repo</span><br><span class="line">baseurl=http://nginx.org/packages/centos/$releasever/$basearch/</span><br><span class="line">gpgcheck=0</span><br><span class="line">enabled=1</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo yum install nginx -y</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">systemctl start nginx #启动</span><br><span class="line">systemctl stop nginx #停止</span><br><span class="line">systemctl restart nginx #重启</span><br><span class="line">systemctl status nginx #查看运行状态</span><br><span class="line">systemctl enable nginx #开机启动</span><br></pre></td></tr></table></figure>
+
+
+
+<p>配置文件可能会缺少server</p>
+<p>谷歌插件安装位置</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">C:\Users\lucui\AppData\Local\Google\Chrome\User Data\Default\Extensions</span><br></pre></td></tr></table></figure>
+
+<h3 id="更新node-amp-npm"><a href="#更新node-amp-npm" class="headerlink" title="更新node&amp;npm"></a>更新node&amp;npm</h3><p>update node</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">npm install -g n</span><br><span class="line">n latest</span><br></pre></td></tr></table></figure>
+
+<p>update npm</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">npm install -g npm</span><br><span class="line">npm install npm@latest -g</span><br><span class="line">or</span><br><span class="line">npm update -g</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装shadowsocks"><a href="#安装shadowsocks" class="headerlink" title="安装shadowsocks"></a>安装shadowsocks</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install python-setuptools -y</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">pip install shadowsocks</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ssserver -p 8281 -k password -m rc4-md5 -d start</span><br></pre></td></tr></table></figure>
+
+<h3 id="主机名修改"><a href="#主机名修改" class="headerlink" title="主机名修改"></a>主机名修改</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">hostnamectl set-hostname node01</span><br><span class="line">hostname</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <tags>
+        <tag>linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ss5代理的配置基本安装</title>
+    <url>/2020/03/23/ss5/</url>
+    <content><![CDATA[<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"> wget https://nchc.dl.sourceforge.net/project/ss5/ss5/3.8.9-8/ss5-3.8.9-8.tar.gz</span><br><span class="line"> </span><br><span class="line"> yum -y install gcc automake make</span><br><span class="line"> </span><br><span class="line">yum -y install pam-devel openldap-devel cyrus-sasl-devel openssl-devel</span><br><span class="line"></span><br><span class="line">tar xvf ss5-3.8.9-8.tar.gz</span><br><span class="line"></span><br><span class="line">cd ss5-3.8.9-8</span><br><span class="line"></span><br><span class="line">./configure &amp;&amp; make &amp;&amp; make install</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 修改配置文件</span></span><br><span class="line">/etc/opt/ss5/ss5.conf</span><br><span class="line">auth    0.0.0.0/0               -               -</span><br><span class="line">permit -	0.0.0.0/0	-	0.0.0.0/0	-	-	-	-	-	</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 端口ip文件，取消注释</span></span><br><span class="line">/etc/sysconfig/ss5</span><br><span class="line"><span class="meta">#</span><span class="bash"> 改成如下内容</span></span><br><span class="line">SS5_OPTS=" -u root -b 0.0.0.0:1080" # 端口自定义，默认1080</span><br><span class="line"></span><br><span class="line">chmod 755 /etc/rc.d/init.d/ss5</span><br><span class="line"></span><br><span class="line">service ss5 start</span><br><span class="line"></span><br><span class="line">netstat -lanp | grep *port</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>ss5</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>web终端的主要开源件</title>
+    <url>/2020/03/23/webssh/</url>
+    <content><![CDATA[<h3 id="xterm-js"><a href="#xterm-js" class="headerlink" title="xterm.js"></a>xterm.js</h3><p>web 终端</p>
+<p>基本 <a href="https://xtermjs.org/docs/api/terminal/classes/terminal/" target="_blank" rel="noopener">API</a></p>
+<h3 id="ssh2"><a href="#ssh2" class="headerlink" title="ssh2"></a>ssh2</h3><p>ssh2 socket 基于node的实现</p>
+<p>基本 <a href="https://github.com/mscdex/ssh2#api" target="_blank" rel="noopener">API</a></p>
+]]></content>
+      <tags>
+        <tag>ssh</tag>
+        <tag>web</tag>
+        <tag>browser</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>iconfont 批量处理</title>
+    <url>/2020/02/23/iconfont/</url>
+    <content><![CDATA[<h3 id="批量添加到购物车"><a href="#批量添加到购物车" class="headerlink" title="批量添加到购物车"></a>批量添加到购物车</h3><pre><code>浏览器控制台中运行一下语句</code></pre><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> span = <span class="built_in">document</span>.querySelectorAll(<span class="string">'.icon-cover'</span>);</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>, len = span.length; i &lt; len; i++) &#123;</span><br><span class="line">     <span class="built_in">console</span>.log(span[i].querySelector(<span class="string">'span'</span>).click());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>plugins</tag>
+        <tag>iconfont</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>环境配置文件</title>
+    <url>/2019/11/23/env/</url>
+    <content><![CDATA[<h3 id="env-文件内容"><a href="#env-文件内容" class="headerlink" title=".env 文件内容"></a>.env 文件内容</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">PORT=3000</span><br><span class="line">NODE_ENV=development</span><br><span class="line">JWT_SECRET=your-secret-whatever</span><br><span class="line">DATABASE_URL=mongodb://118.190.56.31:17027/rapp</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>mbp 环境配置-profile</title>
+    <url>/2019/06/23/profile/</url>
+    <content><![CDATA[<h3 id="mac-profile-配置文件内容"><a href="#mac-profile-配置文件内容" class="headerlink" title="mac profile 配置文件内容"></a>mac profile 配置文件内容</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> System-wide .profile <span class="keyword">for</span> sh(1)</span></span><br><span class="line"></span><br><span class="line">if [ -x /usr/libexec/path_helper ]; then</span><br><span class="line">	eval `/usr/libexec/path_helper -s`</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">if [ "$&#123;BASH-no&#125;" != "no" ]; then</span><br><span class="line">	[ -r /etc/bashrc ] &amp;&amp; . /etc/bashrc</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_231.jdk/Contents/Home</span><br><span class="line">export PATH=$JAVA_HOME/bin:$PATH</span><br><span class="line">export CLASSPATH=:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar</span><br><span class="line"></span><br><span class="line">export ANDROID_HOME=$HOME/Library/Android/sdk</span><br><span class="line">export PATH=$PATH:$ANDROID_HOME/tools</span><br><span class="line">export PATH=$PATH:$ANDROID_HOME/tools/bin</span><br><span class="line">export PATH=$PATH:$ANDROID_HOME/platform-tools</span><br><span class="line">export PATH=$PATH:$ANDROID_HOME/emulator</span><br><span class="line">export HISTTIMEFORMAT="%F %T `whoami` "</span><br><span class="line"></span><br><span class="line">export http_proxy="127.0.0.1:8118"</span><br><span class="line">export https_proxy="127.0.0.1:8118"</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <tags>
+        <tag>mac</tag>
+        <tag>bash</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>docker常用命令</title>
+    <url>/2019/05/19/docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</url>
+    <content><![CDATA[<h3 id="list-docker"><a href="#list-docker" class="headerlink" title="list docker"></a>list docker</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker ps --format "table &#123;&#123;.ID&#125;&#125;\t&#123;&#123;.Names&#125;&#125;\t&#123;&#123;.Status&#125;&#125;\t&#123;&#123;.Ports&#125;&#125;" -a</span><br></pre></td></tr></table></figure>
+
+<h3 id="国内加速地址"><a href="#国内加速地址" class="headerlink" title="国内加速地址"></a>国内加速地址</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">Docker中国区官方镜像</span></span><br><span class="line">https://registry.docker-cn.com</span><br><span class="line"><span class="meta">#</span><span class="bash">网易</span></span><br><span class="line">http://hub-mirror.c.163.com</span><br><span class="line"><span class="meta">#</span><span class="bash">中国科技大学</span></span><br><span class="line">https://docker.mirrors.ustc.edu.cn</span><br></pre></td></tr></table></figure>
+
+<h3 id="consul"><a href="#consul" class="headerlink" title="consul"></a>consul</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker pull consul</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo mkdir -p /Users/mklop/data/consul</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo docker run -d -p 8500:8500 -v /Users/mklop/data/consul:/consul/data -e CONSUL_BIND_INTERFACE='eth0' --name=consul1 consul agent -server -bootstrap -ui -client='0.0.0.0'</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo mkdir -p /opt/data/consul</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo docker run -d --restart=always -p 8500:8500 -v /opt/data/consul:/consul/data -e CONSUL_BIND_INTERFACE='eth0' --name=consul-master consul agent -server -bootstrap -ui -client='0.0.0.0'</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<h3 id="非-root-用户运行docker"><a href="#非-root-用户运行docker" class="headerlink" title="非 root 用户运行docker"></a>非 root 用户运行docker</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 1、 首先创建docker用户组，如果docker用户组存在可以忽略</span></span><br><span class="line">sudo groupadd docker</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 2、把用户添加进docker组中</span></span><br><span class="line">sudo gpasswd -a $&#123;USER&#125; docker</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 3、重启docker</span></span><br><span class="line">sudo service docker restart</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 4、如果普通用户执行docker命令，如果提示get …… dial unix /var/run/docker.sock权限不够，则修改/var/run/docker.sock权限使用root用户执行如下命令，即可</span></span><br><span class="line">sudo chmod a+rw /var/run/docker.sock</span><br></pre></td></tr></table></figure>
+
+<h3 id="私服"><a href="#私服" class="headerlink" title="私服"></a>私服</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 查看私服所有镜像</span></span><br><span class="line">http://ip_address:5000/v2/_catalog</span><br><span class="line">http://192.168.3.100:5000/v2/_catalog</span><br><span class="line"><span class="meta">#</span><span class="bash">客户端</span></span><br><span class="line">/etc/docker/daemon.json</span><br><span class="line"><span class="meta">#</span></span><br><span class="line">&#123;</span><br><span class="line">  "registry-mirrors": [</span><br><span class="line">    "https://registry.docker-cn.com"</span><br><span class="line">  ],</span><br><span class="line">  "insecure-registries": [</span><br><span class="line">    "ip:5000"</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#</span></span><br><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
+
+<h3 id="打包后的jar包"><a href="#打包后的jar包" class="headerlink" title="打包后的jar包"></a>打包后的jar包</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run -d -p 8082:8082 -e "SPRING_PROFILES_ACTIVE=dev" --name vich-test 47.103.196.249:10077/vendorsbar-manager-logistics-api:0.0.1</span><br></pre></td></tr></table></figure>
+
+<h3 id="nexus"><a href="#nexus" class="headerlink" title="nexus"></a>nexus</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run -d --name nexus3 --restart=always -p 8081:8081 -v /opt/nexus-data:/nexus-data sonatype/nexus3</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">chmod 777 /opt/nexus-data</span><br></pre></td></tr></table></figure>
+
+<h3 id="registry"><a href="#registry" class="headerlink" title="registry"></a>registry</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run -d --name registry --restart=always -p 5000:5000 -v /usr/local/registry:/var/lib/registry registry</span><br></pre></td></tr></table></figure>
+
+<h3 id="gitlab"><a href="#gitlab" class="headerlink" title="gitlab"></a>gitlab</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run -d --name gitlab --restart always -p 443:443 -p 90:80 -p 222:22   -v /opt/gitlab/config:/etc/gitlab -v /opt/gitlab/logs:/var/log/gitlab -v /opt/gitlab/data:/var/opt/gitlab gitlab/gitlab-ce</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> gitlab.rb文件内容默认全是注释</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> vim /opt/gitlab/config/gitlab.rb</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 配置http协议所使用的访问地址,不加端口号默认为80</span></span><br><span class="line">external_url 'http://192.168.0.100:90'</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 配置ssh协议所使用的访问地址和端口</span></span><br><span class="line">gitlab_rails['gitlab_ssh_host'] = '192.168.0.100'</span><br><span class="line">gitlab_rails['gitlab_shell_ssh_port'] = 222 # 此端口是run时22端口映射的222端口</span><br><span class="line">:wq #保存配置文件并退出</span><br></pre></td></tr></table></figure>
+
+<h3 id="jenkins"><a href="#jenkins" class="headerlink" title="jenkins"></a>jenkins</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run -d --name jenkins --restart always -p 8090:8080 -v /opt/jenkins:/var/jenkins_home jenkins:latest</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">chmod 777 /opt/jenkins</span><br></pre></td></tr></table></figure>
+
+<h3 id="enter-docker"><a href="#enter-docker" class="headerlink" title="enter docker"></a>enter docker</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker exec -it a9247d879ae6 /bin/bash</span><br></pre></td></tr></table></figure>
+
+<h3 id="mysql"><a href="#mysql" class="headerlink" title="mysql"></a>mysql</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker pull mysql5.7</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run -p 3306:3306 --name mysql -v D:/Docker/mysql/conf:/etc/mysql/conf.d -v D:/Docker/mysql/logs:/logs -v D:/Docker/mysql/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root -d mysql:5.7</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mkdir -p /opt/data/mysql</span><br><span class="line">mkdir conf logs data</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --restart=always -p 3306:3306 --name mysql -v /opt/data/mysql/conf:/etc/mysql/conf.d -v /opt/data/mysql/logs:/logs -v /opt/data/mysql/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root -d mysql:5.7</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run --restart=always -p 33063:3306 --name mysql -v /opt/data/mysql/conf:/etc/mysql/conf.d -v /opt/data/mysql/logs:/logs -v /opt/data/mysql/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root -d mysql</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run --restart=always -p 3306:3306 --name mysql -v /Users/cuichenglu/opt/data/conf:/etc/mysql/conf.d -v /Users/cuichenglu/opt/data/conf/my.cnf:/etc/mysql/my.cnf -v /Users/cuichenglu/opt/data/logs:/logs -v /Users/cuichenglu/opt/data/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root -d mysql</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run --restart=always -p 3306:3306 --name mysql -v /Users/cuichenglu/opt/data/conf:/etc/mysql/conf.d -v /Users/cuichenglu/opt/data/logs:/logs -v /Users/cuichenglu/opt/data/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root -d mysql</span><br></pre></td></tr></table></figure>
+
+<h3 id="rabbitmq"><a href="#rabbitmq" class="headerlink" title="rabbitmq"></a>rabbitmq</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mkdir -p /opt/data/rabbitmq/data</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker pull rabbitmq:3.8.3-management</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run --restart=always --name rabbitmq -p 5672:5672 -p 15672:15672 -v /opt/data/rabbitmq:/var/lib/rabbitmq --hostname vich-rabbit -e RABBITMQ_DEFAULT_VHOST=vich-rabbit-vhost -e RABBITMQ_DEFAULT_USER=vich -e RABBITMQ_DEFAULT_PASS=Kanyan123! rabbitmq:3.8.3-management</span><br></pre></td></tr></table></figure>
+
+<h3 id="redis"><a href="#redis" class="headerlink" title="redis"></a>redis</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker pull redis</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run -p 6379:6379 --name redis -v D:/Docker/redis/data:/data -d redis</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run -p 6379:6379 --name redis -v /opt/data/redis/data:/data -d redis</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run -d --restart=always -v /opt/data/redis/data:/data --name redis -p 6379:6379 redis --requirepass "123456"</span><br></pre></td></tr></table></figure>
+
+<h3 id="portainer"><a href="#portainer" class="headerlink" title="portainer"></a>portainer</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker pull portainer/portainer</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run -p 9000:9000 --restart=always --name prtainer -v /var/run/docker.sock:/var/run/docker.sock -d  portainer/portainer</span><br></pre></td></tr></table></figure>
+
+<h3 id="mongo"><a href="#mongo" class="headerlink" title="mongo"></a>mongo</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run -d --restart=always -p 17027:27017 -v /opt/container/mongo_configdb:/data/configdb -v /opt/container/mongo_db:/data/db --name mongo docker.io/mongo</span><br></pre></td></tr></table></figure>
+
+<h3 id="elasticsearch"><a href="#elasticsearch" class="headerlink" title="elasticsearch"></a>elasticsearch</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker network create search-network</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker run -d --restart=always --net search-network -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" --name elasticsearch docker.elastic.co/elasticsearch/elasticsearch:7.4.2</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>KVM 相关命令</title>
+    <url>/2019/03/23/kvm/</url>
+    <content><![CDATA[<h3 id="kvm-相关命令"><a href="#kvm-相关命令" class="headerlink" title="kvm 相关命令"></a>kvm 相关命令</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">kvm -m 1024 -cdrom cn_windows_7_ultimate_with_sp1_x86_dvd_618763.iso -drive file=win7.qcow2,if=virtio,boot=on -fda virtio-win-0.1.102_amd64.vfd -boot d -nographic -vnc :3</span><br><span class="line">wget https://fedorapeople.org/groups/virt/virtio-win/virtio-win.repo \ -O /etc/yum.repos.d/virtio-win.repo</span><br><span class="line">dnf install virtio-win</span><br><span class="line">dnf --enablerepo=virtio-win-latest upgrade virtio-win</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <tags>
+        <tag>jvm</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>机器学习</title>
+    <url>/2018/12/23/machinrlearning/</url>
+    <content><![CDATA[<h3 id="设置终端翻墙"><a href="#设置终端翻墙" class="headerlink" title="设置终端翻墙"></a>设置终端翻墙</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">set http_proxy=127.0.0.1:1080</span><br><span class="line">set https_proxy=127.0.0.1:1080</span><br><span class="line"><span class="meta">#</span><span class="bash"> 测试</span></span><br><span class="line">curl -v http://www.google.com</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建虚拟环境"><a href="#创建虚拟环境" class="headerlink" title="创建虚拟环境"></a>创建虚拟环境</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">conda create -n pytorch python=<span class="number">3.7</span></span><br></pre></td></tr></table></figure>
+<h3 id="直接安装"><a href="#直接安装" class="headerlink" title="直接安装"></a>直接安装</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">conda install pytorch torchvision cudatoolkit=10.2 -c pytorch</span><br><span class="line"><span class="meta">#</span><span class="bash"> 使用国内源时，不需要后面的 -c pytorch</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="问题解决"><a href="#问题解决" class="headerlink" title="问题解决"></a>问题解决</h3><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">打开终端，提示 “无法加载文件C:\XXX\WindowsPowerShell\profile.ps1，</span><br><span class="line">因为在此系统上禁止运行脚本” 的错误</span><br><span class="line"></span><br><span class="line">FIX</span><br><span class="line"></span><br><span class="line">1. 以管理员身份运行PowerShell</span><br><span class="line"></span><br><span class="line">2. 执行：get-ExecutionPolicy，回复Restricted，表示状态是禁止的</span><br><span class="line"></span><br><span class="line">3.执行：set-ExecutionPolicy RemoteSigned即可 选择 Y </span><br><span class="line"></span><br><span class="line">一定要以管理员的身份运行PowerShell，不是cmd窗口</span><br></pre></td></tr></table></figure>
+
+<h3 id="国内源"><a href="#国内源" class="headerlink" title="国内源"></a>国内源</h3><pre><code>修改位置为  ‪C:\Users\mklop\.condarc</code></pre><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">ssl_verify: true</span><br><span class="line">channels:</span><br><span class="line">  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/</span><br><span class="line">  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge</span><br><span class="line">  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/msys2/</span><br><span class="line">  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/</span><br><span class="line">  - https://mirrors.ustc.edu.cn/anaconda/pkgs/main/</span><br><span class="line">  - defaults</span><br><span class="line">show_channel_urls: true</span><br></pre></td></tr></table></figure>
+
+<h3 id="离线安装部分内容"><a href="#离线安装部分内容" class="headerlink" title="离线安装部分内容"></a>离线安装部分内容</h3><pre><code>注意需要在包的位置运行， 下载地址 报错信息中获取</code></pre><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">conda install --use-local pytorch-1.6.0-py3.7_cuda102_cudnn7_0.tar.bz2</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>pytorch</tag>
+        <tag>tensorflow</tag>
+        <tag>windows 10</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>docker阿里云私服</title>
+    <url>/2018/11/23/docker/</url>
+    <content><![CDATA[<h2 id="1-登录阿里云Docker-Registry"><a href="#1-登录阿里云Docker-Registry" class="headerlink" title="1. 登录阿里云Docker Registry"></a>1. 登录阿里云Docker Registry</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo docker login --username=bcsdamz@126.com registry.cn-hangzhou.aliyuncs.com</span></span><br></pre></td></tr></table></figure>
+
+<p>用于登录的用户名为阿里云账号全名，密码为开通服务时设置的密码。公司通用密码。</p>
+<p>您可以在产品控制台首页修改登录密码。</p>
+<h2 id="2-从Registry中拉取镜像"><a href="#2-从Registry中拉取镜像" class="headerlink" title="2. 从Registry中拉取镜像"></a>2. 从Registry中拉取镜像</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo docker pull registry.cn-hangzhou.aliyuncs.com/vich/dev:[镜像版本号]</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="3-将镜像推送到Registry"><a href="#3-将镜像推送到Registry" class="headerlink" title="3. 将镜像推送到Registry"></a>3. 将镜像推送到Registry</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo docker login --username=bcsdamz@126.com registry.cn-hangzhou.aliyuncs.com$ sudo docker tag [ImageId] registry.cn-hangzhou.aliyuncs.com/vich/dev:[镜像版本号]$ sudo docker push registry.cn-hangzhou.aliyuncs.com/vich/dev:[镜像版本号]</span></span><br></pre></td></tr></table></figure>
+
+<p>请根据实际镜像信息替换示例中的[ImageId]和[镜像版本号]参数。</p>
+<h2 id="4-选择合适的镜像仓库地址"><a href="#4-选择合适的镜像仓库地址" class="headerlink" title="4. 选择合适的镜像仓库地址"></a>4. 选择合适的镜像仓库地址</h2><p>从ECS推送镜像时，可以选择使用镜像仓库内网地址。推送速度将得到提升并且将不会损耗您的公网流量。</p>
+<p>如果您使用的机器位于VPC网络，请使用 registry-vpc.cn-hangzhou.aliyuncs.com 作为Registry的域名登录，并作为镜像命名空间前缀。</p>
+<h2 id="5-示例"><a href="#5-示例" class="headerlink" title="5. 示例"></a>5. 示例</h2><p>使用”docker tag”命令重命名镜像，并将它通过专有网络地址推送至Registry。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo docker imagesREPOSITORY                                                         TAG                 IMAGE ID            CREATED             VIRTUAL SIZEregistry.aliyuncs.com/acs/agent                                    0.7-dfb6816         37bb9c63c8b2        7 days ago          37.89 MB$ sudo docker tag 37bb9c63c8b2 registry-vpc.cn-hangzhou.aliyuncs.com/acs/agent:0.7-dfb6816</span></span><br></pre></td></tr></table></figure>
+
+<p>使用”docker images”命令找到镜像，将该镜像名称中的域名部分变更为Registry专有网络地址。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo docker push registry-vpc.cn-hangzhou.aliyuncs.com/acs/agent:0.7-dfb6816</span></span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>gradle windows 10 基础配置</title>
+    <url>/2018/11/23/gradle/</url>
+    <content><![CDATA[<h3 id="新建变量"><a href="#新建变量" class="headerlink" title="新建变量"></a>新建变量</h3><pre><code>变量名：GRADLE_HOME
+变量值：解压到的目录
+
+变量名：GRADLE_USER_HOME
+变量值：自定义Gradle仓库目录或者Maven的仓库目录
+
+变量名：Path
+变量值：%GRADLE_HOME%\bin;</code></pre><h3 id="配置Gradle仓库源"><a href="#配置Gradle仓库源" class="headerlink" title="配置Gradle仓库源"></a>配置Gradle仓库源</h3><pre><code>在Gradle安装目录下的 init.d 文件夹下，新建一个 init.gradle 文件，里面填写以下配置。</code></pre><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">allprojects &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        maven &#123; url 'file:///C:/Java/maven_repository'&#125;</span><br><span class="line">        mavenLocal()</span><br><span class="line">        maven &#123; name "Alibaba" ; url "https://maven.aliyun.com/repository/public" &#125;</span><br><span class="line">        maven &#123; name "Bstek" ; url "http://nexus.bsdn.org/content/groups/public/" &#125;</span><br><span class="line">        mavenCentral()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    buildscript &#123; </span><br><span class="line">        repositories &#123; </span><br><span class="line">            maven &#123; name "Alibaba" ; url 'https://maven.aliyun.com/repository/public' &#125;</span><br><span class="line">            maven &#123; name "Bstek" ; url 'http://nexus.bsdn.org/content/groups/public/' &#125;</span><br><span class="line">            maven &#123; name "M2" ; url 'https://plugins.gradle.org/m2/' &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="国内源"><a href="#国内源" class="headerlink" title="国内源"></a>国内源</h3><pre><code>安装目录 inid.d 文件夹下，创建 init.gradle </code></pre><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">allprojects&#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        def ALIYUN_REPOSITORY_URL = 'http://maven.aliyun.com/nexus/content/groups/public'</span><br><span class="line">        def ALIYUN_JCENTER_URL = 'http://maven.aliyun.com/nexus/content/repositories/jcenter'</span><br><span class="line">        all &#123; ArtifactRepository repo -&gt;</span><br><span class="line">            if(repo instanceof MavenArtifactRepository)&#123;</span><br><span class="line">                def url = repo.url.toString()</span><br><span class="line">                if (url.startsWith('https://repo1.maven.org/maven2')) &#123;</span><br><span class="line">                    project.logger.lifecycle "Repository $&#123;repo.url&#125; replaced by $ALIYUN_REPOSITORY_URL."</span><br><span class="line">                    remove repo</span><br><span class="line">                &#125;</span><br><span class="line">                if (url.startsWith('https://jcenter.bintray.com/')) &#123;</span><br><span class="line">                    project.logger.lifecycle "Repository $&#123;repo.url&#125; replaced by $ALIYUN_JCENTER_URL."</span><br><span class="line">                    remove repo</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        maven &#123;</span><br><span class="line">                url ALIYUN_REPOSITORY_URL</span><br><span class="line">            url ALIYUN_JCENTER_URL</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>gradle</tag>
+        <tag>maven</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>win10 安装anaconda后的环境变量配置</title>
+    <url>/2018/07/23/anaconda/</url>
+    <content><![CDATA[<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">%</span><span class="bash">ANACONDA_HOME% = C:\Users\mklop\anaconda3</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">%</span><span class="bash">ANACONDA_HOME%</span></span><br><span class="line"><span class="meta">%</span><span class="bash">ANACONDA_HOME%\Scripts</span></span><br><span class="line"><span class="meta">%</span><span class="bash">ANACONDA_HOME%\Library\bin</span></span><br><span class="line"><span class="meta">%</span><span class="bash">ANACONDA_HOME%\Library\usr\bin</span></span><br><span class="line"><span class="meta">%</span><span class="bash">ANACONDA_HOME%\Library\mingw-w64\bin</span></span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>win10</tag>
+        <tag>python</tag>
+        <tag>anaconda</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>mbp 环境配置-zsh</title>
+    <url>/2018/07/23/zsh%E9%85%8D%E7%BD%AE/</url>
+    <content><![CDATA[<h3 id="zsh-命令配置"><a href="#zsh-命令配置" class="headerlink" title="zsh 命令配置"></a>zsh 命令配置</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">alias cls='clear'</span><br><span class="line">alias ll='ls -alF'</span><br><span class="line">alias la='ls -A'</span><br><span class="line">alias l='ls -CF'</span><br><span class="line">alias gci='git commit .'</span><br><span class="line">alias gad='git add .'</span><br><span class="line">alias gpl='git pull'</span><br><span class="line">alias gps='git push' </span><br><span class="line">alias vi='vim'</span><br><span class="line">alias javac="javac -J-Dfile.encoding=utf8"</span><br><span class="line">alias grep="grep --color=auto"</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">  以下不推荐</span></span><br><span class="line">alias -s html=mate   # 在命令行直接输入后缀为 html 的文件名，会在 TextMate 中打开</span><br><span class="line">alias -s rb=mate     # 在命令行直接输入 ruby 文件，会在 TextMate 中打开</span><br><span class="line">alias -s py=vi       # 在命令行直接输入 python 文件，会用 vim 中打开，以下类似</span><br><span class="line">alias -s js=vi</span><br><span class="line">alias -s c=vi</span><br><span class="line">alias -s java=vi</span><br><span class="line">alias -s txt=vi</span><br><span class="line">alias -s gz='tar -xzvf'</span><br><span class="line">alias -s tgz='tar -xzvf'</span><br><span class="line">alias -s zip='unzip'</span><br><span class="line">alias -s bz2='tar -xjvf'</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <tags>
+        <tag>mac</tag>
+        <tag>bash</tag>
+        <tag>zsh</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>centos 防火墙</title>
+    <url>/2018/05/26/firewalld/</url>
+    <content><![CDATA[<h3 id="单个"><a href="#单个" class="headerlink" title="单个"></a>单个</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">firewall-cmd --permanent --zone=public --add-port=100/tcp</span><br><span class="line">firewall-cmd --permanent --zone=public --add-port=100/udp</span><br><span class="line">firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+<h3 id="范围"><a href="#范围" class="headerlink" title="范围"></a>范围</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">firewall-cmd --permanent --zone=public --add-port=100-500/tcp</span><br><span class="line">firewall-cmd --permanent --zone=public --add-port=100-500/udp</span><br><span class="line">firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>firewall</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>mysql 在线安装后基础配置</title>
+    <url>/2018/05/26/mysql/</url>
+    <content><![CDATA[<h3 id="修改策略，及密码长度"><a href="#修改策略，及密码长度" class="headerlink" title="修改策略，及密码长度"></a>修改策略，及密码长度</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">set global validate_password_length=1;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">set global validate_password_policy=0</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改密码"><a href="#修改密码" class="headerlink" title="修改密码"></a>修改密码</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ALTER USER 'root'@'localhost' IDENTIFIED BY '123456';</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ALTER USER 'root'@'localhost' PASSWORD EXPIRE NEVER;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改权限"><a href="#修改权限" class="headerlink" title="修改权限"></a>修改权限</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'YYBrhr_2018' WITH GRANT OPTION;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hyper-v 和 VMware 切换</title>
+    <url>/2018/05/25/wsl2/</url>
+    <content><![CDATA[<h3 id="Win10-下-Hyper-v-和-VMware-切换"><a href="#Win10-下-Hyper-v-和-VMware-切换" class="headerlink" title="Win10 下 Hyper-v 和 VMware 切换"></a>Win10 下 Hyper-v 和 VMware 切换</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 必须用管理员权限，</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 关闭 Hyper-v</span></span><br><span class="line">bcdedit /set hypervisorlaunchtype off</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 开启 Hyper-v</span></span><br><span class="line">bcdedit /set hypervisorlaunchtype auto</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <tags>
+        <tag>Windows10</tag>
+        <tag>WSL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>idea 常用插件</title>
+    <url>/2017/02/23/idea_plugin/</url>
+    <content><![CDATA[<h3 id="nginx-support"><a href="#nginx-support" class="headerlink" title="nginx support"></a>nginx support</h3><ul>
+<li>本地 nginx 管理，可以看日志等</li>
+<li>配置界面</li>
+</ul>
+<p><img src="https://gitee.com/lucuicheng/pic/raw/master/blog/%E6%89%B9%E6%B3%A8%202020-08-24%20104030.png" alt=""></p>
+]]></content>
+      <tags>
+        <tag>idea</tag>
+        <tag>plugins</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>git ssh 生成</title>
+    <url>/2015/10/23/git-ssh/</url>
+    <content><![CDATA[<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">git config --global user.name "lucuicheng"</span><br><span class="line">git config --global user.email "lucuicheng@gmail.com"</span><br><span class="line"></span><br><span class="line">ssh-keygen -t rsa -C "lucuicheng@gmail.com"</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+</search>
